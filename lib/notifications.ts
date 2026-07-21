@@ -135,3 +135,8 @@ export async function scheduleAlertNotification(alert: AlertModel): Promise<stri
 export async function cancelAlertNotification(notificationId: string): Promise<void> {
   await Notifications.cancelScheduledNotificationAsync(notificationId);
 }
+
+/** Cancels every scheduled notification - used when resetting all app data. */
+export async function cancelAllNotifications(): Promise<void> {
+  await Notifications.cancelAllScheduledNotificationsAsync();
+}

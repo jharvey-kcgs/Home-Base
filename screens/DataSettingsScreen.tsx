@@ -20,8 +20,8 @@ import {
 import Text from '../components/AppText';
 import { useTheme, ThemeColors } from '../lib/theme';
 import { useResponsive } from '../lib/responsive';
-import { exportAllData, importAllData, getAlerts, setAlertNotificationId } from '../lib/storage';
-import { scheduleAlertNotification, ensureNotificationPermission } from '../lib/notifications';
+import { exportAllData, importAllData, getAlerts, setAlertNotificationId, resetAllData } from '../lib/storage';
+import { scheduleAlertNotification, ensureNotificationPermission, cancelAllNotifications } from '../lib/notifications';
 
 const REGULAR = 'PlayfairDisplay_400Regular';
 
@@ -94,6 +94,44 @@ export default function DataSettingsScreen({ navigation }: any) {
     }
   };
 
+  const handleResetData = () => {
+    RNAlert.alert(
+      'Reset all app data?',
+      'This permanently deletes everything in Home Base - events, quotes, tasks, habits, alerts, thoughts, and settings. There is no undo.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Continue', style: 'destructive', onPress: confirmResetData },
+      ]
+    );
+  };
+
+  const confirmResetData = () => {
+    RNAlert.alert(
+      'Are you absolutely sure?',
+      'This is permanent. Consider exporting a backup first if you haven\'t already.',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        { text: 'Delete Everything', style: 'destructive', onPress: runReset },
+      ]
+    );
+  };
+
+  const runReset = async () => {
+    setIsWorking(true);
+    try {
+      await cancelAllNotifications();
+      await resetAllData();
+      RNAlert.alert(
+        'All data cleared',
+        'Home Base has been reset. Close and reopen the app to start fresh.',
+      );
+    } catch (err) {
+      RNAlert.alert('Reset failed', 'Something went wrong clearing your data.');
+    } finally {
+      setIsWorking(false);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
@@ -142,6 +180,15 @@ export default function DataSettingsScreen({ navigation }: any) {
         >
           <Text style={styles.buttonText}>Restore From This Backup</Text>
         </TouchableOpacity>
+
+        <Text style={styles.sectionHeader}>Reset</Text>
+        <Text style={styles.note}>
+          Permanently deletes everything in Home Base. There's no undo - export a backup above first if
+          there's any chance you'll want this data again.
+        </Text>
+        <TouchableOpacity style={styles.dangerButton} onPress={handleResetData} disabled={isWorking}>
+          <Text style={styles.dangerButtonText}>Reset App Data</Text>
+        </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
   );
@@ -174,6 +221,16 @@ const makeStyles = (c: ThemeColors) =>
     button: { marginHorizontal: 16, backgroundColor: c.accent, borderRadius: 10, paddingVertical: 12, alignItems: 'center' },
     buttonDisabled: { opacity: 0.4 },
     buttonText: { color: c.accentText, fontFamily: REGULAR, fontSize: 15, fontWeight: '600' },
+    dangerButton: {
+      marginHorizontal: 16,
+      borderWidth: 1,
+      borderColor: c.danger,
+      borderRadius: 10,
+      paddingVertical: 12,
+      alignItems: 'center',
+      marginBottom: 20,
+    },
+    dangerButtonText: { color: c.danger, fontFamily: REGULAR, fontSize: 15, fontWeight: '600' },
     textArea: {
       marginHorizontal: 16,
       marginBottom: 12,

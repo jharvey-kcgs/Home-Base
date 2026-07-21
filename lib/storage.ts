@@ -110,6 +110,17 @@ export async function importAllData(jsonString: string): Promise<void> {
   await AsyncStorage.multiSet(entries);
 }
 
+/**
+ * Wipes every piece of stored data - events, quotes, tasks, habits,
+ * alerts, thoughts, settings, everything. Does not touch scheduled OS
+ * notifications; the caller is responsible for cancelling those first
+ * (lib/notifications.ts's cancelAllNotifications).
+ */
+export async function resetAllData(): Promise<void> {
+  const allKeys = Object.values(KEYS);
+  await AsyncStorage.multiRemove(allKeys);
+}
+
 // --- Clear Completed (Task Base + Alert Base) ---
 export async function clearCompletedTasks(): Promise<number> {
   const items = await getAll<Task>(KEYS.tasks);
