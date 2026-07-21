@@ -1,0 +1,30 @@
+{
+  "expo": {
+    "name": "Home Base",
+    "slug": "tracker-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.yourname.trackerapp"
+    },
+    "android": {
+      "package": "com.yourname.trackerapp",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/icon.png",
+        "backgroundColor": "#F5E9D3"
+      }
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "color": "#007AFF"
+        }
+      ],
+      "expo-font"
+    ]
+  }
+}
