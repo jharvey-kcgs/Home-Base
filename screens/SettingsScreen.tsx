@@ -17,6 +17,7 @@ const ROWS: { label: string; route: string }[] = [
   { label: 'Notifications', route: 'NotificationSettings' },
   { label: 'Data', route: 'DataSettings' },
   { label: 'About', route: 'About' },
+  { label: 'FAQ', route: 'FAQ' },
 ];
 
 export default function SettingsScreen({ navigation }: any) {

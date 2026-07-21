@@ -24,6 +24,7 @@ import ThemeSettingsScreen from './screens/ThemeSettingsScreen';
 import NotificationSettingsScreen from './screens/NotificationSettingsScreen';
 import DataSettingsScreen from './screens/DataSettingsScreen';
 import AboutScreen from './screens/AboutScreen';
+import FAQScreen from './screens/FAQScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
 import { getSettings } from './lib/storage';
 import { ThemeProvider, useTheme } from './lib/theme';
@@ -83,6 +84,7 @@ function ThemedApp() {
           <Stack.Screen name="NotificationSettings" component={NotificationSettingsScreen} />
           <Stack.Screen name="DataSettings" component={DataSettingsScreen} />
           <Stack.Screen name="About" component={AboutScreen} />
+          <Stack.Screen name="FAQ" component={FAQScreen} />
         </Stack.Navigator>
       </View>
     </NavigationContainer>

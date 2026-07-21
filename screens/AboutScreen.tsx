@@ -91,41 +91,6 @@ export default function AboutScreen({ navigation }: any) {
             Completed" option to sweep out everything you've already checked off in one go.
           </Text>
         </Section>
-
-        <Section title="FAQ">
-          <Item name="Is my data private?">
-            Yes. Everything is stored only on this device - there's no account, no server, and nothing is
-            ever sent anywhere.
-          </Item>
-          <Item name="Why did my habit progress reset overnight?">
-            Your list of habits never changes on its own - only the day's number or checkbox resets, so
-            you're not stuck manually zeroing things out every morning. Yesterday's value is saved into
-            the Habit Report first, so nothing is lost. A habit only ever disappears if you delete it
-            yourself.
-          </Item>
-          <Item name="How do notifications actually work?">
-            Alert Base schedules real local notifications on your phone - they'll arrive even if Home Base
-            isn't open. You can turn this off entirely in Settings → Notifications.
-          </Item>
-          <Item name="What does Vacation Mode do?">
-            While a date range is set in Settings → Notifications, no new alert notifications will be
-            scheduled - useful if you want a quiet stretch without turning notifications off for good.
-          </Item>
-          <Item name="Can I change my name or the app's look later?">
-            Any time - Settings → Profile for your name, Settings → Theme for Dark Mode, font size, and
-            accent color.
-          </Item>
-          <Item name="Can I back up my data?">
-            Yes - Settings → Data → Share Backup gives you a backup you can save, email to yourself, or
-            AirDrop somewhere safe. Restoring replaces everything currently in the app, so double-check
-            before confirming.
-          </Item>
-          <Item name="Why won't my reminder notify me?">
-            Home Base only asks for notification permission the first time you actually set one up, not the
-            moment you open the app. If you said no at that point, any reminder you create will still save
-            correctly, but you'll see a note pointing you to Settings → Notifications to turn them back on.
-          </Item>
-        </Section>
       </ScrollView>
     </SafeAreaView>
   );
