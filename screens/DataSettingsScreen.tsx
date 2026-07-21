@@ -26,7 +26,7 @@ import { scheduleAlertNotification, ensureNotificationPermission, cancelAllNotif
 const REGULAR = 'PlayfairDisplay_400Regular';
 
 export default function DataSettingsScreen({ navigation }: any) {
-  const { theme } = useTheme();
+  const { theme, refresh } = useTheme();
   const styles = useMemo(() => makeStyles(theme.colors), [theme.colors]);
   const { maxContentWidth } = useResponsive();
   const [importText, setImportText] = useState('');
@@ -84,6 +84,7 @@ export default function DataSettingsScreen({ navigation }: any) {
       }
 
       setImportText('');
+      await refresh(); // pushes the restored theme/font-size settings live immediately
       RNAlert.alert('Restored', 'Your backup has been restored. Head back to Home Base to see it.', [
         { text: 'OK', onPress: () => navigation.navigate('Home') },
       ]);
@@ -121,6 +122,7 @@ export default function DataSettingsScreen({ navigation }: any) {
     try {
       await cancelAllNotifications();
       await resetAllData();
+      await refresh(); // theme/font-size fall back to defaults immediately, not just after restart
       RNAlert.alert(
         'All data cleared',
         'Home Base has been reset. Close and reopen the app to start fresh.',
