@@ -17,17 +17,39 @@ import { updateSettings } from '../lib/storage';
 const REGULAR = 'PlayfairDisplay_400Regular';
 const NAME_MAX_LENGTH = 24; // keeps "<Name>'s Base" from ever overwhelming the header
 
-export default function OnboardingScreen({ onDone }: { onDone: () => void }) {
+export default function OnboardingScreen({ onDone }: { onDone: (wantsTour: boolean) => void }) {
   const { theme } = useTheme();
   const styles = useMemo(() => makeStyles(theme.colors), [theme.colors]);
   const [name, setName] = useState('');
+  const [step, setStep] = useState<'name' | 'tour'>('name');
 
   const handleContinue = async () => {
     const trimmed = name.trim();
     if (!trimmed) return;
     await updateSettings({ userName: trimmed });
-    onDone();
+    setStep('tour');
   };
+
+  if (step === 'tour') {
+    return (
+      <SafeAreaView style={styles.safe}>
+        <View style={[styles.content, { maxWidth: 480, width: '100%', alignSelf: 'center' }]}>
+          <Text style={styles.heading}>Want a quick tour?</Text>
+          <Text style={styles.subheading}>
+            A short look at what each widget does and how editing works - takes about a minute.
+          </Text>
+
+          <TouchableOpacity style={styles.button} onPress={() => onDone(true)}>
+            <Text style={styles.buttonText}>Yes, show me around</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.secondaryButton} onPress={() => onDone(false)}>
+            <Text style={styles.secondaryButtonText}>No thanks, take me in</Text>
+          </TouchableOpacity>
+        </View>
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -110,4 +132,10 @@ const makeStyles = (c: ThemeColors) =>
     },
     buttonDisabled: { opacity: 0.4 },
     buttonText: { color: c.accentText, fontFamily: REGULAR, fontSize: 16, fontWeight: '600' },
+    secondaryButton: {
+      paddingVertical: 14,
+      alignItems: 'center',
+      marginTop: 12,
+    },
+    secondaryButtonText: { color: c.textSecondary, fontFamily: REGULAR, fontSize: 15 },
   });

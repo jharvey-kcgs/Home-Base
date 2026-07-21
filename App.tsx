@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import { View, Text, StatusBar } from 'react-native';
-import { NavigationContainer, DefaultTheme, DarkTheme } from '@react-navigation/native';
+import { NavigationContainer, DefaultTheme, DarkTheme, createNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
   useFonts,
@@ -30,11 +30,13 @@ import { getSettings } from './lib/storage';
 import { ThemeProvider, useTheme } from './lib/theme';
 
 const Stack = createNativeStackNavigator();
+const navigationRef = createNavigationContainerRef<any>();
 
 function RootGate() {
   const { theme } = useTheme();
   const [checked, setChecked] = useState(false);
   const [needsOnboarding, setNeedsOnboarding] = useState(false);
+  const [wantsTour, setWantsTour] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -49,13 +51,20 @@ function RootGate() {
   }
 
   if (needsOnboarding) {
-    return <OnboardingScreen onDone={() => setNeedsOnboarding(false)} />;
+    return (
+      <OnboardingScreen
+        onDone={(tour: boolean) => {
+          setWantsTour(tour);
+          setNeedsOnboarding(false);
+        }}
+      />
+    );
   }
 
-  return <ThemedApp />;
+  return <ThemedApp showTourOnReady={wantsTour} />;
 }
 
-function ThemedApp() {
+function ThemedApp({ showTourOnReady }: { showTourOnReady: boolean }) {
   const { theme } = useTheme();
 
   const navTheme = {
@@ -67,7 +76,18 @@ function ThemedApp() {
   };
 
   return (
-    <NavigationContainer theme={navTheme}>
+    <NavigationContainer
+      ref={navigationRef}
+      theme={navTheme}
+      onReady={() => {
+        if (showTourOnReady) {
+          // Push Settings then About, so the back button (labeled "‹ Settings")
+          // actually leads somewhere consistent with what it says.
+          navigationRef.current?.navigate('Settings');
+          navigationRef.current?.navigate('About');
+        }
+      }}
+    >
       <StatusBar barStyle={theme.mode === 'dark' ? 'light-content' : 'dark-content'} />
       <View style={{ flex: 1, backgroundColor: theme.colors.background }}>
         <Stack.Navigator screenOptions={{ headerShown: false }}>
