@@ -1,7 +1,8 @@
 // App.tsx
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, StatusBar } from 'react-native';
+import { View, Text, StatusBar, AppState } from 'react-native';
+import * as Notifications from 'expo-notifications';
 import { NavigationContainer, DefaultTheme, DarkTheme, createNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import {
@@ -27,6 +28,7 @@ import AboutScreen from './screens/AboutScreen';
 import FAQScreen from './screens/FAQScreen';
 import OnboardingScreen from './screens/OnboardingScreen';
 import { getSettings } from './lib/storage';
+import { clearBadgeCount } from './lib/notifications';
 import { ThemeProvider, useTheme } from './lib/theme';
 
 const Stack = createNativeStackNavigator();
@@ -44,6 +46,45 @@ function RootGate() {
       setNeedsOnboarding(!settings.userName);
       setChecked(true);
     })();
+  }, []);
+
+  useEffect(() => {
+    // Clear immediately, then again shortly after - iOS can apply a
+    // just-delivered notification's own badge number right around the
+    // same moment the app comes to the foreground, so a single
+    // immediate clear can occasionally get overwritten by that.
+    const clearWithRetry = () => {
+      clearBadgeCount();
+      setTimeout(clearBadgeCount, 800);
+    };
+
+    clearWithRetry(); // covers a normal cold launch
+
+    const appStateSubscription = AppState.addEventListener('change', (nextState) => {
+      if (nextState === 'active') {
+        clearWithRetry(); // covers returning from background
+      }
+    });
+
+    // Independent trigger specifically for "opened via tapping a notification",
+    // rather than relying only on the general AppState transition to catch it.
+    const notificationTapSubscription = Notifications.addNotificationResponseReceivedListener(() => {
+      clearWithRetry();
+    });
+
+    // Covers notifications that arrive while the app is already open - iOS
+    // still applies each notification's own badge number on delivery
+    // regardless of foreground state, so without this, the badge can climb
+    // back up from a notification you were already present to see.
+    const notificationReceivedSubscription = Notifications.addNotificationReceivedListener(() => {
+      clearWithRetry();
+    });
+
+    return () => {
+      appStateSubscription.remove();
+      notificationTapSubscription.remove();
+      notificationReceivedSubscription.remove();
+    };
   }, []);
 
   if (!checked) {

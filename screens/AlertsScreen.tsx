@@ -20,7 +20,7 @@ import { useResponsive } from '../lib/responsive';
 import { useFocusEffect } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { getAlerts, addAlert, updateAlert, setAlertNotificationId, toggleAlertComplete, deleteAlert, getSettings, clearCompletedAlerts } from '../lib/storage';
-import { scheduleAlertNotification, cancelAlertNotification, ensureNotificationPermission } from '../lib/notifications';
+import { scheduleAlertNotification, cancelAlertNotification, ensureNotificationPermission, getAlertScheduleWarning } from '../lib/notifications';
 import {
   Alert as AlertModel,
   NotificationOffset,
@@ -46,7 +46,7 @@ export default function AlertsScreen({ navigation }: any) {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [notes, setNotes] = useState('');
-  const [notificationOffset, setNotificationOffset] = useState<NotificationOffset | null>(null);
+  const [notificationOffset, setNotificationOffset] = useState<NotificationOffset>(0);
   const [recurrence, setRecurrence] = useState<RecurrenceRule>('none');
   const [isSaving, setIsSaving] = useState(false);
 
@@ -67,7 +67,7 @@ export default function AlertsScreen({ navigation }: any) {
     setDate(new Date());
     setTime(new Date());
     setNotes('');
-    setNotificationOffset(null);
+    setNotificationOffset(0);
     setRecurrence('none');
     setShowEditor(true);
   };
@@ -86,7 +86,7 @@ export default function AlertsScreen({ navigation }: any) {
       setTime(new Date());
     }
     setNotes(alert.notes);
-    setNotificationOffset(alert.notificationOffsetMinutes);
+    setNotificationOffset(alert.notificationOffsetMinutes ?? 0);
     setRecurrence(alert.recurrence);
     setShowEditor(true);
   };
@@ -166,6 +166,13 @@ export default function AlertsScreen({ navigation }: any) {
             if (previousNotificationId) await cancelAlertNotification(previousNotificationId);
 
             if (wantsNotification) {
+              const scheduleWarning = getAlertScheduleWarning({ ...payload, id } as AlertModel);
+              if (scheduleWarning) {
+                await setAlertNotificationId(id, null);
+                RNAlert.alert("This alert won't notify you", scheduleWarning);
+                return;
+              }
+
               const granted = await ensureNotificationPermission();
               if (!granted) {
                 await setAlertNotificationId(id, null);
@@ -249,7 +256,9 @@ export default function AlertsScreen({ navigation }: any) {
               <Text style={styles.rowSubtitle}>
                 {item.date}
                 {item.isAllDay ? ' · All Day' : item.time ? ` · ${item.time}` : ''}
-                {item.notificationOffsetMinutes ? ` · ${item.notificationOffsetMinutes}min before` : ''}
+                {item.notificationOffsetMinutes != null
+                  ? ` · ${item.notificationOffsetMinutes === 0 ? 'Notify at the time' : `${item.notificationOffsetMinutes}min before`}`
+                  : ''}
                 {item.recurrence !== 'none' ? ` · ${RECURRENCE_LABELS[item.recurrence]}` : ''}
               </Text>
             </TouchableOpacity>
@@ -323,16 +332,8 @@ export default function AlertsScreen({ navigation }: any) {
                   />
                 )}
 
-                <Text style={styles.fieldLabel}>Notification (optional)</Text>
+                <Text style={styles.fieldLabel}>Notify</Text>
                 <View style={styles.chipRow}>
-                  <TouchableOpacity
-                    style={[styles.chip, notificationOffset === null && styles.chipActive]}
-                    onPress={() => setNotificationOffset(null)}
-                  >
-                    <Text style={[styles.chipText, notificationOffset === null && styles.chipTextActive]}>
-                      None
-                    </Text>
-                  </TouchableOpacity>
                   {NOTIFICATION_OFFSETS.map((m) => (
                     <TouchableOpacity
                       key={m}
@@ -340,7 +341,7 @@ export default function AlertsScreen({ navigation }: any) {
                       onPress={() => setNotificationOffset(m)}
                     >
                       <Text style={[styles.chipText, notificationOffset === m && styles.chipTextActive]}>
-                        {m} min before
+                        {m === 0 ? 'At the time' : `${m} min before`}
                       </Text>
                     </TouchableOpacity>
                   ))}

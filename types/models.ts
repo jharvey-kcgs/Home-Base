@@ -17,6 +17,7 @@ export interface Event {
   name: string;
   description: string;
   recurrence: RecurrenceRule;
+  linkedAlertId: string | null; // set when "Also set a reminder" is on
 }
 
 // Widget 2
@@ -92,7 +93,7 @@ export interface CheckLogEntry {
 }
 
 // Widget 5
-export const NOTIFICATION_OFFSETS = [5, 10, 15, 30, 60] as const;
+export const NOTIFICATION_OFFSETS = [0, 5, 10, 15, 30, 60] as const;
 export type NotificationOffset = (typeof NOTIFICATION_OFFSETS)[number];
 
 export interface Alert {
@@ -102,8 +103,9 @@ export interface Alert {
   date: string; // "YYYY-MM-DD" - always required
   time: string | null; // "HH:MM" 24hr - required unless isAllDay
   notes: string;
-  notificationOffsetMinutes: NotificationOffset | null; // null = no notification
+  notificationOffsetMinutes: NotificationOffset | null; // 0 = at the time; null only exists on old data from before this was required
   notificationId: string | null;
+  recurrence: RecurrenceRule; // follows the linked Event's recurrence, or 'none' for a standalone alert
   isCompleted: boolean;
   createdAt: string;
 }
@@ -118,7 +120,7 @@ export interface Thought {
 
 // Settings
 export type ThemeMode = 'light' | 'dark';
-export type FontSize = 'default' | 'large';
+export type FontSize = 'small' | 'default' | 'large';
 
 export interface AppSettings {
   userName: string | null;

@@ -56,6 +56,33 @@ export async function ensureNotificationPermission(): Promise<boolean> {
 }
 
 /**
+ * Explains why scheduleAlertNotification would refuse to schedule
+ * anything, so the UI can warn the person instead of silently saving a
+ * reminder that will never actually notify them. Returns null if
+ * everything looks fine (permission is checked separately).
+ */
+export function getAlertScheduleWarning(alert: AlertModel): string | null {
+  if (alert.isAllDay) return null; // all-day alerts intentionally don't notify
+  if (!alert.time) return null;
+  if (alert.notificationOffsetMinutes == null) {
+    return 'No "Notify" time was picked, so this alert won\'t send a notification - it\'ll just show up in the list.';
+  }
+
+  if (alert.recurrence === 'none') {
+    const [hours, minutes] = alert.time.split(':').map(Number);
+    const anchor = new Date(alert.date + 'T00:00:00');
+    anchor.setHours(hours, minutes, 0, 0);
+    anchor.setMinutes(anchor.getMinutes() - alert.notificationOffsetMinutes);
+
+    if (anchor.getTime() <= Date.now()) {
+      return `With "${alert.notificationOffsetMinutes} min before" applied, that notification time has already passed, so it won't fire. Try a later time or a shorter "Notify" setting.`;
+    }
+  }
+
+  return null;
+}
+
+/**
  * Schedules a local notification for an Alert, `notificationOffsetMinutes`
  * before its date/time, repeating according to the alert's recurrence.
  * Returns null (and schedules nothing) if the alert is all-day, has no
@@ -72,9 +99,21 @@ export async function scheduleAlertNotification(alert: AlertModel): Promise<stri
   anchor.setHours(hours, minutes, 0, 0);
   anchor.setMinutes(anchor.getMinutes() - alert.notificationOffsetMinutes);
 
+  // A precise running count isn't reliably achievable for local
+  // notifications: each one has to be given a fixed badge number at the
+  // moment it's *scheduled*, not when it actually fires - so if several
+  // are scheduled in advance before any of them fire (the normal case),
+  // they all read the same starting point and stomp on each other. This
+  // is a real iOS platform constraint, not something fixable in this
+  // codebase. Rather than show a number that can be wrong, every alert
+  // just signals "something's waiting" - simple and always honest, and
+  // it clears reliably (see clearBadgeCount) the moment you check the app.
+  const badgeNumber = 1;
+
   const content = {
     title: alert.name,
     body: alert.notes || `In ${alert.notificationOffsetMinutes} minutes`,
+    badge: badgeNumber,
   };
 
   switch (alert.recurrence) {
@@ -139,4 +178,16 @@ export async function cancelAlertNotification(notificationId: string): Promise<v
 /** Cancels every scheduled notification - used when resetting all app data. */
 export async function cancelAllNotifications(): Promise<void> {
   await Notifications.cancelAllScheduledNotificationsAsync();
+}
+
+/** Clears the app icon's badge count - call whenever the app comes to the foreground. */
+export async function clearBadgeCount(): Promise<void> {
+  try {
+    const succeeded = await Notifications.setBadgeCountAsync(0);
+    if (!succeeded) {
+      console.warn('Home Base: setBadgeCountAsync(0) returned false - badge permission may be missing.');
+    }
+  } catch (err) {
+    console.warn('Home Base: clearing badge count threw an error.', err);
+  }
 }

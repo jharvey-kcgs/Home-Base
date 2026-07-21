@@ -33,7 +33,7 @@ import {
   setAlertNotificationId,
   getSettings,
 } from '../lib/storage';
-import { scheduleAlertNotification, cancelAlertNotification, ensureNotificationPermission } from '../lib/notifications';
+import { scheduleAlertNotification, cancelAlertNotification, ensureNotificationPermission, getAlertScheduleWarning } from '../lib/notifications';
 import {
   Event,
   RecurrenceRule,
@@ -175,6 +175,13 @@ export default function EventsScreen({ navigation }: any) {
 
     if (alertId) {
       if (previousNotificationId) await cancelAlertNotification(previousNotificationId);
+
+      const scheduleWarning = getAlertScheduleWarning({ ...alertPayload, id: alertId } as AlertModel);
+      if (scheduleWarning) {
+        await setAlertNotificationId(alertId, null);
+        Alert.alert("This reminder won't notify you", scheduleWarning);
+        return alertId;
+      }
 
       const granted = await ensureNotificationPermission();
       if (!granted) {
@@ -403,7 +410,7 @@ export default function EventsScreen({ navigation }: any) {
                           reminderOffset === m && styles.recurrenceChipTextActive,
                         ]}
                       >
-                        {m} min before
+                        {m === 0 ? 'At the time' : `${m} min before`}
                       </Text>
                     </TouchableOpacity>
                   ))}
