@@ -304,6 +304,7 @@ export default function AlertsScreen({ navigation }: any) {
             </TouchableOpacity>
             {showDatePicker && (
               <DateTimePicker
+                themeVariant={theme.mode === 'dark' ? 'dark' : 'light'}
                 value={date}
                 mode="date"
                 onChange={(_, selected) => {
@@ -323,6 +324,7 @@ export default function AlertsScreen({ navigation }: any) {
                 </TouchableOpacity>
                 {showTimePicker && (
                   <DateTimePicker
+                    themeVariant={theme.mode === 'dark' ? 'dark' : 'light'}
                     value={time}
                     mode="time"
                     onChange={(_, selected) => {

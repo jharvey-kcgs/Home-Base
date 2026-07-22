@@ -246,6 +246,7 @@ export default function TasksScreen({ navigation }: any) {
             </View>
             {showDatePicker && (
               <DateTimePicker
+                themeVariant={theme.mode === 'dark' ? 'dark' : 'light'}
                 value={dueDate ?? new Date()}
                 mode="date"
                 onChange={(_, selected) => {

@@ -79,6 +79,7 @@ export default function NotificationSettingsScreen({ navigation }: any) {
         </View>
         {showStartPicker && (
           <DateTimePicker
+            themeVariant={theme.mode === 'dark' ? 'dark' : 'light'}
             value={settings.vacationStart ? new Date(settings.vacationStart + 'T00:00:00') : new Date()}
             mode="date"
             onChange={(_, selected) => {
@@ -96,6 +97,7 @@ export default function NotificationSettingsScreen({ navigation }: any) {
         </View>
         {showEndPicker && (
           <DateTimePicker
+            themeVariant={theme.mode === 'dark' ? 'dark' : 'light'}
             value={settings.vacationEnd ? new Date(settings.vacationEnd + 'T00:00:00') : new Date()}
             mode="date"
             onChange={(_, selected) => {

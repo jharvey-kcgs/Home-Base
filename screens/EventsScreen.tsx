@@ -325,6 +325,7 @@ export default function EventsScreen({ navigation }: any) {
             </TouchableOpacity>
             {showDatePicker && (
               <DateTimePicker
+                themeVariant={theme.mode === 'dark' ? 'dark' : 'light'}
                 value={date}
                 mode="date"
                 onChange={(_, selected) => {
@@ -387,6 +388,7 @@ export default function EventsScreen({ navigation }: any) {
                 </TouchableOpacity>
                 {showReminderTimePicker && (
                   <DateTimePicker
+                    themeVariant={theme.mode === 'dark' ? 'dark' : 'light'}
                     value={reminderTime}
                     mode="time"
                     onChange={(_, selected) => {
