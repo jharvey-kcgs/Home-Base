@@ -143,11 +143,11 @@ export const DEFAULT_SETTINGS: AppSettings = {
 };
 
 export const THEME_COLORS: { name: string; hex: string }[] = [
-  { name: 'Cream', hex: '#F5E9D3' },
+  { name: 'Cream', hex: '#F7F3EC' },
   { name: 'White', hex: '#FFFFFF' },
   { name: 'Black', hex: '#000000' },
-  { name: 'Purple', hex: '#AF52DE' },
-  { name: 'Brown', hex: '#A2845E' },
+  { name: 'Purple', hex: '#6200EE' },
+  { name: 'Brown', hex: '#8B5A2B' },
   { name: 'Green', hex: '#34C759' },
   { name: 'Blue', hex: '#007AFF' },
   { name: 'Pink', hex: '#FF2D55' },
