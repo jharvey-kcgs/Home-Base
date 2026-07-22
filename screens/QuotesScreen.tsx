@@ -362,7 +362,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     paddingVertical: 12,
     position: 'relative',
   },
-  back: { color: c.accent, fontSize: 16, fontFamily: REGULAR },
+  back: { color: c.accentReadable, fontSize: 16, fontFamily: REGULAR },
   title: {
     flex: 1,
     textAlign: 'center',
@@ -372,7 +372,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     paddingHorizontal: 4,
   },
   headerSide: { minWidth: 50, flexShrink: 0 },
-  menuDots: { fontSize: 18, color: c.accent, letterSpacing: 1 },
+  menuDots: { fontSize: 18, color: c.accentReadable, letterSpacing: 1 },
   sectionHeader: {
     fontSize: 13,
     fontFamily: REGULAR,
@@ -397,7 +397,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   },
   editorTitle: { fontSize: 18, fontFamily: 'PlayfairDisplay_700Bold', fontWeight: '700' },
   editorActions: { flexDirection: 'row', alignItems: 'center' },
-  saveButton: { color: c.accent, fontSize: 16, fontFamily: REGULAR },
+  saveButton: { color: c.accentReadable, fontSize: 16, fontFamily: REGULAR },
   disabled: { opacity: 0.3 },
   form: { paddingHorizontal: 16 },
   fieldLabel: { fontSize: 13, color: c.textMuted, marginTop: 16, marginBottom: 6, fontFamily: REGULAR },

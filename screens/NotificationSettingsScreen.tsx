@@ -128,7 +128,7 @@ const makeStyles = (c: ThemeColors) =>
       paddingVertical: 12,
       position: 'relative',
     },
-    back: { color: c.accent, fontSize: 16, fontFamily: REGULAR },
+    back: { color: c.accentReadable, fontSize: 16, fontFamily: REGULAR },
     title: { flex: 1, textAlign: 'center', fontSize: 22, fontFamily: 'PlayfairDisplay_700Bold', fontWeight: '700', paddingHorizontal: 8 },
     headerSide: { minWidth: 70, flexShrink: 0 },
     row: {
@@ -153,7 +153,7 @@ const makeStyles = (c: ThemeColors) =>
     note: { fontSize: 12, color: c.textMuted, fontFamily: REGULAR, paddingHorizontal: 16, marginTop: 6 },
     dateButton: { padding: 8, borderWidth: 1, borderColor: c.border, borderRadius: 8 },
     linkButton: { marginHorizontal: 16, marginTop: 10 },
-    linkButtonText: { color: c.accent, fontFamily: REGULAR, fontSize: 14 },
+    linkButtonText: { color: c.accentReadable, fontFamily: REGULAR, fontSize: 14 },
     clearButton: { margin: 16, padding: 12, borderRadius: 10, backgroundColor: c.surface, alignItems: 'center' },
     clearButtonText: { color: c.danger, fontFamily: REGULAR, fontWeight: '600' },
   });

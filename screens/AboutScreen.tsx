@@ -107,7 +107,7 @@ const makeStyles = (c: ThemeColors) =>
       paddingVertical: 12,
       position: 'relative',
     },
-    back: { color: c.accent, fontSize: 16, fontFamily: REGULAR },
+    back: { color: c.accentReadable, fontSize: 16, fontFamily: REGULAR },
     title: { flex: 1, textAlign: 'center', fontSize: 22, fontFamily: 'PlayfairDisplay_700Bold', fontWeight: '700', paddingHorizontal: 8 },
     headerSide: { minWidth: 70, flexShrink: 0 },
     intro: { fontSize: 15, fontFamily: REGULAR, color: c.textSecondary, paddingHorizontal: 16, marginBottom: 8, lineHeight: 21 },

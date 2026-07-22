@@ -341,7 +341,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     paddingVertical: 12,
     position: 'relative',
   },
-  back: { color: c.accent, fontSize: 16, fontFamily: REGULAR },
+  back: { color: c.accentReadable, fontSize: 16, fontFamily: REGULAR },
   title: {
     flex: 1,
     textAlign: 'center',
@@ -351,7 +351,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     paddingHorizontal: 4,
   },
   headerSide: { minWidth: 50, flexShrink: 0 },
-  menuDots: { fontSize: 18, color: c.accent, letterSpacing: 1 },
+  menuDots: { fontSize: 18, color: c.accentReadable, letterSpacing: 1 },
   sectionHeader: {
     fontSize: 13,
     fontFamily: REGULAR,
@@ -406,7 +406,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   },
   editorTitle: { fontSize: 17, fontFamily: 'PlayfairDisplay_700Bold', fontWeight: '700' },
   editorActions: { flexDirection: 'row', alignItems: 'center' },
-  saveButton: { color: c.accent, fontSize: 16, fontFamily: REGULAR },
+  saveButton: { color: c.accentReadable, fontSize: 16, fontFamily: REGULAR },
   reportDay: { paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: c.border },
   reportDate: { fontSize: 15, fontFamily: 'PlayfairDisplay_700Bold', fontWeight: '700', marginBottom: 4 },
   reportLine: { fontSize: 14, fontFamily: REGULAR, color: c.border, marginTop: 2 },

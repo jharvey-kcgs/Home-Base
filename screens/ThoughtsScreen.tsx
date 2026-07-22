@@ -180,7 +180,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     paddingVertical: 12,
     position: 'relative',
   },
-  back: { color: c.accent, fontSize: 16, fontFamily: REGULAR },
+  back: { color: c.accentReadable, fontSize: 16, fontFamily: REGULAR },
   title: {
     flex: 1,
     textAlign: 'center',
@@ -190,7 +190,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     paddingHorizontal: 4,
   },
   headerSide: { minWidth: 50, flexShrink: 0 },
-  menuDots: { fontSize: 18, color: c.accent, letterSpacing: 1 },
+  menuDots: { fontSize: 18, color: c.accentReadable, letterSpacing: 1 },
   row: { paddingHorizontal: 16, paddingVertical: 12, borderBottomWidth: StyleSheet.hairlineWidth, borderColor: c.border },
   rowTitle: { fontSize: 16, fontFamily: REGULAR, fontWeight: '600' },
   rowPreview: { fontSize: 13, color: c.textMuted, marginTop: 2, fontFamily: REGULAR },
@@ -204,7 +204,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
     paddingBottom: 12,
   },
   editorActions: { flexDirection: 'row', alignItems: 'center' },
-  saveButton: { color: c.accent, fontSize: 16, fontFamily: REGULAR, fontWeight: '600' },
+  saveButton: { color: c.accentReadable, fontSize: 16, fontFamily: REGULAR, fontWeight: '600' },
   titleInput: { fontSize: 20, fontFamily: 'PlayfairDisplay_700Bold', fontWeight: '700', paddingHorizontal: 16, marginBottom: 8, color: c.text },
   bodyInput: { flex: 1, fontSize: 16, fontFamily: REGULAR, paddingHorizontal: 16, textAlignVertical: 'top', color: c.text },
 });

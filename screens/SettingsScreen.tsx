@@ -60,7 +60,7 @@ const makeStyles = (c: ThemeColors) =>
       paddingVertical: 12,
       position: 'relative',
     },
-    back: { color: c.accent, fontSize: 16, fontFamily: REGULAR },
+    back: { color: c.accentReadable, fontSize: 16, fontFamily: REGULAR },
     title: {
       flex: 1,
       textAlign: 'center',
