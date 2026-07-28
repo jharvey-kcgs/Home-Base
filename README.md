@@ -45,11 +45,11 @@ this app collects or transmits about you.
 **Where this stands right now:** every screen has been individually
 tested, including a full round of bug-fixing across notifications, badge
 behavior, dark mode, and theming. A `npx tsc --noEmit` pass across the
-whole project currently returns zero errors. What's left is mostly
-TestFlight logistics (Apple Developer Program enrollment, `eas build`,
-TestFlight distribution — tracked in
-[Section 8](#8-testflight--release-readiness)) plus one open item from
-the accessibility pass (VoiceOver labeling, not yet started).
+whole project currently returns zero errors. What's left is almost
+entirely TestFlight logistics (Apple Developer Program enrollment,
+`eas build`, TestFlight distribution — tracked in
+[Section 8](#8-testflight--release-readiness)); the full accessibility
+pass, including on-device VoiceOver verification, is complete.
 
 ---
 
@@ -332,18 +332,20 @@ colors. The fix, in `lib/theme.tsx`:
 All 30 real combinations (10 colors × Light/Dark plain-text × button-fill
 text) were verified passing after this fix, not just spot-checked.
 
-**VoiceOver labeling is done, verification is next.** Every icon-only
+**VoiceOver labeling and on-device verification are both complete.**
+Every icon-only
 button (flower/house, every "•••" menu, every back button), every chip
 and toggle (priority, recurrence, notify-offset, theme color, font size,
 Yes/No habits, checkboxes), every slider, every list row, and every text
 input across all 15 screens now carries a proper `accessibilityLabel` -
 list rows in particular were rebuilt to read as one combined summary
 ("Mom's Birthday, July 15th, repeats yearly") instead of three or four
-fragmented stops. What's genuinely still open: none of this has been
-verified by actually turning VoiceOver on and listening - the labels are
-structurally correct, not confirmed to *sound* right yet. Also still
-open: a check against iOS's own system-level "Larger Text" accessibility
-setting, which can go further than this app's own Large font tier.
+fragmented stops. **This has since been verified on a real device** -
+every screen, every prompt, listened to with VoiceOver actually turned
+on, alongside functional testing of each widget and the date/timezone
+fix. Still open: a check against iOS's own system-level "Larger Text"
+accessibility setting, which can go further than this app's own Large
+font tier.
 
 ---
 
@@ -451,8 +453,8 @@ Current status, as of this writing:
   [Section 5](#5-notifications--badge-behavior) for the badge design
   decisions specifically.
 - **Accessibility**: color contrast pass complete and verified; VoiceOver
-  labeling complete across all 15 screens, not yet verified on-device
-  (see [Section 6](#6-color-accessibility)).
+  labeling complete and verified on-device across all 15 screens (see
+  [Section 6](#6-color-accessibility)).
 - **TypeScript**: `npx tsc --noEmit` currently returns zero errors
   across the whole project.
 - **Splash screen**: configured - shows the app icon (logo on the
@@ -479,8 +481,6 @@ Current status, as of this writing:
   dashboard, an actual widget on the phone's home screen. A meaningfully
   bigger project on top of Expo, not a quick add.
 - **Timezone handling** for recurring events and habit resets - untested
-  if the app is ever used while traveling across timezones.
-- **VoiceOver on-device verification** - labeling is done (see
-  [Section 6](#6-color-accessibility)); still needs a real pass with
-  VoiceOver turned on to confirm it actually sounds right, screen by
-  screen.
+  if the app is ever used while traveling across timezones. Testers are
+  all currently in one timezone, so this is only realistically checkable
+  once/if the app reaches people in others.
