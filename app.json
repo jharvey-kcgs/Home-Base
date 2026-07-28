@@ -1,20 +1,20 @@
 {
   "expo": {
     "name": "Home Base",
-    "slug": "tracker-app",
+    "slug": "home-base",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.yourname.trackerapp"
+      "bundleIdentifier": "com.JHarvey.HomeBase"
     },
     "android": {
-      "package": "com.yourname.trackerapp",
+      "package": "com.JHarvey.HomeBase",
       "adaptiveIcon": {
         "foregroundImage": "./assets/icon.png",
-        "backgroundColor": "#F5E9D3"
+        "backgroundColor": "#F7F3EC"
       }
     },
     "plugins": [

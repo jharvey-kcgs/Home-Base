@@ -59,7 +59,9 @@ export default function AboutScreen({ navigation }: any) {
         <Section title="The Widgets">
           <Item name="Event Base">
             Dates worth remembering - birthdays, holidays, anything tied to a specific day. Can repeat
-            daily, weekly, monthly, or yearly. Today's events show right on your Home screen.
+            daily, weekly, monthly, or yearly. Today's events show right on your Home screen. Turn on
+            "Also set a reminder" when creating one to have it notify you too - the reminder follows the
+            event's own repeat pattern automatically.
           </Item>
           <Item name="Quote Base">
             A library of quotes, sorted into categories. Home shows one at random each day - the same one
@@ -75,8 +77,9 @@ export default function AboutScreen({ navigation }: any) {
             past days are saved in the Habit Report so you can look back.
           </Item>
           <Item name="Alert Base">
-            Reminders with a real notification. Set a specific time, or mark something All Day. Optionally
-            get notified 5-60 minutes ahead of time.
+            Reminders with a real notification. Set a specific time, or mark something All Day. By default
+            you're notified right at that time - or pick 5 to 60 minutes ahead of it instead. Can repeat,
+            same as Event Base.
           </Item>
           <Item name="Thought Base">
             A notepad for anything that doesn't fit elsewhere - a title and a body, nothing more required.

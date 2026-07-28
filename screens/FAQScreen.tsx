@@ -69,9 +69,28 @@ export default function FAQScreen({ navigation }: any) {
             before confirming.
           </Item>
           <Item name="Why won't my reminder notify me?">
-            Home Base only asks for notification permission the first time you actually set one up, not the
-            moment you open the app. If you said no at that point, any reminder you create will still save
-            correctly, but you'll see a note pointing you to Settings → Notifications to turn them back on.
+            Two common reasons. First: Home Base only asks for notification permission the first time you
+            actually set one up, not the moment you open the app - if you said no then, the alert still
+            saves correctly, but you'll see a note pointing you to Settings → Notifications to turn them
+            back on. Second: if the notification time you picked has already passed by the time you save
+            it, you'll get a plain warning explaining that instead of the app just staying silent.
+          </Item>
+          <Item name="Can an Event remind me too?">
+            Yes - turn on "Also set a reminder" when creating or editing an event. It creates a real,
+            separate entry in Alert Base that you can also view and edit there, and it automatically
+            repeats on the same schedule as the event itself.
+          </Item>
+          <Item name='Why does the notification badge just show a plain "1" instead of a count?'>
+            On purpose. A precise running count (2, 3, 4...) isn't something a phone can reliably promise
+            for reminders scheduled in advance and delivered while the app is closed - the number would
+            often just be wrong. Rather than show a count that can't be trusted, the badge simply shows
+            "something's waiting" and clears itself the moment you open the app or view a notification.
+          </Item>
+          <Item name="Can I start over completely?">
+            Yes - Settings → Data → Reset App Data permanently clears everything: every event, quote,
+            task, habit, alert, and thought, plus your name and theme settings. It asks you to confirm
+            twice before doing anything, since it can't be undone. Worth exporting a backup first if
+            there's any chance you'll want the data again.
           </Item>
         </View>
       </ScrollView>
