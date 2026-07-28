@@ -263,13 +263,13 @@ export default function EventsScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="Back to Home Base">
           <Text style={styles.back}>‹ Home Base</Text>
         </TouchableOpacity>
         <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
           Event Base
         </Text>
-        <TouchableOpacity onPress={handleMenu} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}>
+        <TouchableOpacity onPress={handleMenu} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="More options">
           <Text style={styles.menuDots}>•••</Text>
         </TouchableOpacity>
       </View>
@@ -281,7 +281,15 @@ export default function EventsScreen({ navigation }: any) {
         data={events}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.row} onPress={() => openExisting(item)}>
+          <TouchableOpacity
+            style={styles.row}
+            onPress={() => openExisting(item)}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel={`${item.name}, ${item.date}${
+              item.recurrence !== 'none' ? `, ${RECURRENCE_LABELS[item.recurrence]}` : ''
+            }${item.linkedAlertId ? ', reminder set' : ''}`}
+          >
             <Text style={styles.rowDate}>{item.date}</Text>
             <Text style={styles.rowTitle}>{item.name}</Text>
             <View style={styles.rowMeta}>
@@ -308,7 +316,7 @@ export default function EventsScreen({ navigation }: any) {
             <Text style={styles.editorTitle}>{editingId ? 'Edit Event' : 'New Event'}</Text>
             <View style={styles.editorActions}>
               {editingId && (
-                <TouchableOpacity onPress={handleDeleteMenu} style={{ marginRight: 16 }}>
+                <TouchableOpacity onPress={handleDeleteMenu} style={{ marginRight: 16 }} accessibilityRole="button" accessibilityLabel="Delete options">
                   <Text style={styles.menuDots}>•••</Text>
                 </TouchableOpacity>
               )}
@@ -320,7 +328,12 @@ export default function EventsScreen({ navigation }: any) {
 
           <ScrollView style={[styles.form, { width: '100%', maxWidth: maxContentWidth, alignSelf: 'center' }]} keyboardShouldPersistTaps="handled">
             <Text style={styles.fieldLabel}>Date</Text>
-            <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
+            <TouchableOpacity
+              style={styles.dateButton}
+              onPress={() => setShowDatePicker(true)}
+              accessibilityRole="button"
+              accessibilityLabel={`Event date: ${date.toLocaleDateString()}`}
+            >
               <Text>{date.toLocaleDateString()}</Text>
             </TouchableOpacity>
             {showDatePicker && (
@@ -340,6 +353,7 @@ export default function EventsScreen({ navigation }: any) {
               placeholderTextColor={theme.colors.textMuted}
               style={styles.input}
               placeholder="Event name"
+              accessibilityLabel="Event name"
               value={name}
               onChangeText={setName}
             />
@@ -349,6 +363,7 @@ export default function EventsScreen({ navigation }: any) {
               placeholderTextColor={theme.colors.textMuted}
               style={[styles.input, styles.descriptionInput]}
               placeholder="Details..."
+              accessibilityLabel="Notes"
               value={description}
               onChangeText={setDescription}
               multiline
@@ -361,6 +376,9 @@ export default function EventsScreen({ navigation }: any) {
                   key={r}
                   style={[styles.recurrenceChip, recurrence === r && styles.recurrenceChipActive]}
                   onPress={() => setRecurrence(r)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: recurrence === r }}
+                  accessibilityLabel={RECURRENCE_LABELS[r]}
                 >
                   <Text
                     style={[styles.recurrenceChipText, recurrence === r && styles.recurrenceChipTextActive]}
@@ -373,7 +391,12 @@ export default function EventsScreen({ navigation }: any) {
 
             <View style={styles.reminderToggleRow}>
               <Text style={styles.fieldLabel}>Also set a reminder</Text>
-              <Switch value={hasReminder} onValueChange={setHasReminder} trackColor={{ true: theme.colors.accent }} />
+              <Switch
+                value={hasReminder}
+                onValueChange={setHasReminder}
+                trackColor={{ true: theme.colors.accent }}
+                accessibilityLabel="Also set a reminder"
+              />
             </View>
 
             {hasReminder && (
@@ -383,7 +406,12 @@ export default function EventsScreen({ navigation }: any) {
                 </Text>
 
                 <Text style={styles.fieldLabel}>Reminder Time</Text>
-                <TouchableOpacity style={styles.dateButton} onPress={() => setShowReminderTimePicker(true)}>
+                <TouchableOpacity
+                  style={styles.dateButton}
+                  onPress={() => setShowReminderTimePicker(true)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Reminder time: ${reminderTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`}
+                >
                   <Text>{reminderTime.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}</Text>
                 </TouchableOpacity>
                 {showReminderTimePicker && (
@@ -405,6 +433,9 @@ export default function EventsScreen({ navigation }: any) {
                       key={m}
                       style={[styles.recurrenceChip, reminderOffset === m && styles.recurrenceChipActive]}
                       onPress={() => setReminderOffset(m)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: reminderOffset === m }}
+                      accessibilityLabel={m === 0 ? 'At the time' : `${m} minutes before`}
                     >
                       <Text
                         style={[

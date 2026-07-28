@@ -167,13 +167,13 @@ export default function HabitsScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="Back to Home Base">
           <Text style={styles.back}>‹ Home Base</Text>
         </TouchableOpacity>
         <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
           Habit Base
         </Text>
-        <TouchableOpacity onPress={handleMenu} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}>
+        <TouchableOpacity onPress={handleMenu} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="More options">
           <Text style={styles.menuDots}>•••</Text>
         </TouchableOpacity>
       </View>
@@ -182,7 +182,11 @@ export default function HabitsScreen({ navigation }: any) {
         <Text style={styles.sectionHeader}>Progress</Text>
         {sliders.map((s) => (
           <View key={s.id} style={styles.sliderRow}>
-            <TouchableOpacity onPress={() => openExistingSlider(s)}>
+            <TouchableOpacity
+              onPress={() => openExistingSlider(s)}
+              accessibilityRole="button"
+              accessibilityLabel={`Edit ${s.name} habit`}
+            >
               <View style={styles.sliderLabelRow}>
                 <Text style={styles.sliderLabel}>{s.name}</Text>
                 <Text style={styles.sliderValue}>
@@ -198,6 +202,8 @@ export default function HabitsScreen({ navigation }: any) {
               onValueChange={(v) => handleSliderChange(s.id, v)}
               onSlidingComplete={(v) => handleSliderComplete(s.id, v)}
               minimumTrackTintColor={theme.colors.accent}
+              accessibilityLabel={s.name}
+              accessibilityValue={{ min: 0, max: s.maxValue, now: s.value, text: `${s.value} of ${s.maxValue} ${s.unit}` }}
             />
           </View>
         ))}
@@ -206,19 +212,29 @@ export default function HabitsScreen({ navigation }: any) {
         <Text style={styles.sectionHeader}>Tracking</Text>
         {checks.map((c) => (
           <View key={c.id} style={styles.row}>
-            <TouchableOpacity onPress={() => openExistingCheck(c)}>
+            <TouchableOpacity
+              onPress={() => openExistingCheck(c)}
+              accessibilityRole="button"
+              accessibilityLabel={`Edit ${c.name} habit`}
+            >
               <Text style={styles.rowText}>{c.name}</Text>
             </TouchableOpacity>
             <View style={styles.yesNoRow}>
               <TouchableOpacity
                 style={[styles.yesNoButton, c.isChecked && styles.yesNoButtonActiveYes]}
                 onPress={() => setHabitCheckValue(c.id, true).then(load)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: c.isChecked }}
+                accessibilityLabel={`${c.name}: Yes`}
               >
                 <Text style={[styles.yesNoText, c.isChecked && styles.yesNoTextActive]}>Yes</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[styles.yesNoButton, !c.isChecked && styles.yesNoButtonActiveNo]}
                 onPress={() => setHabitCheckValue(c.id, false).then(load)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: !c.isChecked }}
+                accessibilityLabel={`${c.name}: No`}
               >
                 <Text style={[styles.yesNoText, !c.isChecked && styles.yesNoTextActive]}>No</Text>
               </TouchableOpacity>
@@ -248,7 +264,7 @@ export default function HabitsScreen({ navigation }: any) {
             </Text>
             <View style={styles.editorActions}>
               {editingId && (
-                <TouchableOpacity onPress={handleDeleteMenu} style={{ marginRight: 16 }}>
+                <TouchableOpacity onPress={handleDeleteMenu} style={{ marginRight: 16 }} accessibilityRole="button" accessibilityLabel="Delete options">
                   <Text style={styles.menuDots}>•••</Text>
                 </TouchableOpacity>
               )}
@@ -263,7 +279,7 @@ export default function HabitsScreen({ navigation }: any) {
             <Text style={styles.typeReadout}>{editorKind === 'slider' ? 'Progress Habit' : 'Tracking Habit'}</Text>
 
             <Text style={styles.fieldLabel}>Habit Name</Text>
-            <TextInput placeholderTextColor={theme.colors.textMuted} style={styles.input} placeholder="Habit name" value={name} onChangeText={setName} />
+            <TextInput placeholderTextColor={theme.colors.textMuted} style={styles.input} placeholder="Habit name" value={name} onChangeText={setName} accessibilityLabel="Habit name" />
 
             {editorKind === 'slider' && (
               <>
@@ -274,6 +290,9 @@ export default function HabitsScreen({ navigation }: any) {
                       key={u}
                       style={[styles.chip, unit === u && styles.chipActive]}
                       onPress={() => setUnit(u)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: unit === u }}
+                      accessibilityLabel={u}
                     >
                       <Text style={[styles.chipText, unit === u && styles.chipTextActive]}>{u}</Text>
                     </TouchableOpacity>
@@ -285,6 +304,7 @@ export default function HabitsScreen({ navigation }: any) {
             placeholderTextColor={theme.colors.textMuted}
                   style={styles.input}
                   placeholder="e.g. 8"
+                  accessibilityLabel="Max amount"
                   value={maxValueText}
                   onChangeText={setMaxValueText}
                   keyboardType="number-pad"

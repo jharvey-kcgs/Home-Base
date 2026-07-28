@@ -157,13 +157,13 @@ export default function TasksScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="Back to Home Base">
           <Text style={styles.back}>‹ Home Base</Text>
         </TouchableOpacity>
         <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
           Task Base
         </Text>
-        <TouchableOpacity onPress={handleMenu} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}>
+        <TouchableOpacity onPress={handleMenu} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="More options">
           <Text style={styles.menuDots}>•••</Text>
         </TouchableOpacity>
       </View>
@@ -175,10 +175,23 @@ export default function TasksScreen({ navigation }: any) {
         renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
         renderItem={({ item }) => (
           <View style={styles.row}>
-            <TouchableOpacity onPress={() => toggleTaskDone(item.id).then(load)}>
+            <TouchableOpacity
+              onPress={() => toggleTaskDone(item.id).then(load)}
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: item.isDone }}
+              accessibilityLabel={`Mark ${item.name} as ${item.isDone ? 'not done' : 'done'}`}
+            >
               <Text style={styles.checkbox}>{item.isDone ? '☑' : '☐'}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.rowMain} onPress={() => openExisting(item)}>
+            <TouchableOpacity
+              style={styles.rowMain}
+              onPress={() => openExisting(item)}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={`${item.name}, priority ${PRIORITY_LABELS[item.priority]}${
+                item.isDone ? ', done' : ''
+              }`}
+            >
               <Text style={[styles.rowTitle, item.isDone && styles.doneText]}>{item.name}</Text>
               <View style={styles.rowMeta}>
                 <Text style={styles.priorityBadge}>{PRIORITY_LABELS[item.priority]}</Text>
@@ -202,7 +215,7 @@ export default function TasksScreen({ navigation }: any) {
             <Text style={styles.editorTitle}>{editingId ? 'Edit Task' : 'New Task'}</Text>
             <View style={styles.editorActions}>
               {editingId && (
-                <TouchableOpacity onPress={handleDeleteMenu} style={{ marginRight: 16 }}>
+                <TouchableOpacity onPress={handleDeleteMenu} style={{ marginRight: 16 }} accessibilityRole="button" accessibilityLabel="Delete options">
                   <Text style={styles.menuDots}>•••</Text>
                 </TouchableOpacity>
               )}
@@ -214,7 +227,7 @@ export default function TasksScreen({ navigation }: any) {
 
           <ScrollView style={[styles.form, { width: '100%', maxWidth: maxContentWidth, alignSelf: 'center' }]} keyboardShouldPersistTaps="handled">
             <Text style={styles.fieldLabel}>Task Name</Text>
-            <TextInput placeholderTextColor={theme.colors.textMuted} style={styles.input} placeholder="What needs doing?" value={name} onChangeText={setName} />
+            <TextInput placeholderTextColor={theme.colors.textMuted} style={styles.input} placeholder="What needs doing?" value={name} onChangeText={setName} accessibilityLabel="Task name" />
 
             <Text style={styles.fieldLabel}>Priority</Text>
             <View style={styles.chipRow}>
@@ -223,6 +236,9 @@ export default function TasksScreen({ navigation }: any) {
                   key={p}
                   style={[styles.chip, priority === p && styles.chipActive]}
                   onPress={() => setPriority(p)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: priority === p }}
+                  accessibilityLabel={`Priority ${p}, ${PRIORITY_LABELS[p]}`}
                 >
                   <Text style={[styles.chipText, priority === p && styles.chipTextActive]}>
                     {p} · {PRIORITY_LABELS[p]}
@@ -233,7 +249,12 @@ export default function TasksScreen({ navigation }: any) {
 
             <Text style={styles.fieldLabel}>Due Date</Text>
             <View style={styles.chipRow}>
-              <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
+              <TouchableOpacity
+                style={styles.dateButton}
+                onPress={() => setShowDatePicker(true)}
+                accessibilityRole="button"
+                accessibilityLabel={`Due date: ${dueDate ? dueDate.toLocaleDateString() : 'not set'}`}
+              >
                 <Text style={{ fontFamily: REGULAR }}>
                   {dueDate ? dueDate.toLocaleDateString() : 'No due date'}
                 </Text>
@@ -261,6 +282,7 @@ export default function TasksScreen({ navigation }: any) {
             placeholderTextColor={theme.colors.textMuted}
               style={[styles.input, styles.multilineInput]}
               placeholder="Any notes..."
+              accessibilityLabel="Notes"
               value={notes}
               onChangeText={setNotes}
               multiline

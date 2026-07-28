@@ -39,7 +39,7 @@ export default function NotificationSettingsScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="Back to Settings">
           <Text style={styles.back}>‹ Settings</Text>
         </TouchableOpacity>
         <Text style={styles.title} pointerEvents="none">
@@ -58,13 +58,18 @@ export default function NotificationSettingsScreen({ navigation }: any) {
             value={settings.notificationsEnabled}
             onValueChange={(v) => apply({ notificationsEnabled: v })}
             trackColor={{ true: theme.colors.accent }}
+            accessibilityLabel="Enable Notifications"
           />
         </View>
         <Text style={styles.note}>
           Turns Home Base's own alert scheduling on or off. For sound, banner style, or other notification
           behavior, that's controlled by iOS itself.
         </Text>
-        <TouchableOpacity style={styles.linkButton} onPress={() => Linking.openSettings()}>
+        <TouchableOpacity
+          style={styles.linkButton}
+          onPress={() => Linking.openSettings()}
+          accessibilityRole="button"
+        >
           <Text style={styles.linkButtonText}>Open Phone Notification Settings</Text>
         </TouchableOpacity>
 
@@ -73,7 +78,12 @@ export default function NotificationSettingsScreen({ navigation }: any) {
 
         <View style={styles.row}>
           <Text style={styles.rowLabel}>Start</Text>
-          <TouchableOpacity style={styles.dateButton} onPress={() => setShowStartPicker(true)}>
+          <TouchableOpacity
+            style={styles.dateButton}
+            onPress={() => setShowStartPicker(true)}
+            accessibilityRole="button"
+            accessibilityLabel={`Vacation start date: ${settings.vacationStart ?? 'not set'}`}
+          >
             <Text style={{ fontFamily: REGULAR }}>{settings.vacationStart ?? 'Not set'}</Text>
           </TouchableOpacity>
         </View>
@@ -91,7 +101,12 @@ export default function NotificationSettingsScreen({ navigation }: any) {
 
         <View style={styles.row}>
           <Text style={styles.rowLabel}>End</Text>
-          <TouchableOpacity style={styles.dateButton} onPress={() => setShowEndPicker(true)}>
+          <TouchableOpacity
+            style={styles.dateButton}
+            onPress={() => setShowEndPicker(true)}
+            accessibilityRole="button"
+            accessibilityLabel={`Vacation end date: ${settings.vacationEnd ?? 'not set'}`}
+          >
             <Text style={{ fontFamily: REGULAR }}>{settings.vacationEnd ?? 'Not set'}</Text>
           </TouchableOpacity>
         </View>
@@ -108,7 +123,11 @@ export default function NotificationSettingsScreen({ navigation }: any) {
         )}
 
         {(settings.vacationStart || settings.vacationEnd) && (
-          <TouchableOpacity style={styles.clearButton} onPress={() => apply({ vacationStart: null, vacationEnd: null })}>
+          <TouchableOpacity
+            style={styles.clearButton}
+            onPress={() => apply({ vacationStart: null, vacationEnd: null })}
+            accessibilityRole="button"
+          >
             <Text style={styles.clearButtonText}>Clear Vacation Mode</Text>
           </TouchableOpacity>
         )}

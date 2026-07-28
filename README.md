@@ -332,11 +332,18 @@ colors. The fix, in `lib/theme.tsx`:
 All 30 real combinations (10 colors × Light/Dark plain-text × button-fill
 text) were verified passing after this fix, not just spot-checked.
 
-**Still open**: a VoiceOver labeling pass (icon-only buttons like the
-flower/house/"•••" currently rely on their visible glyph, with no
-`accessibilityLabel`) and a check against iOS's own system-level "Larger
-Text" accessibility setting, which can go further than this app's own
-Large font tier. Neither has been started yet.
+**VoiceOver labeling is done, verification is next.** Every icon-only
+button (flower/house, every "•••" menu, every back button), every chip
+and toggle (priority, recurrence, notify-offset, theme color, font size,
+Yes/No habits, checkboxes), every slider, every list row, and every text
+input across all 15 screens now carries a proper `accessibilityLabel` -
+list rows in particular were rebuilt to read as one combined summary
+("Mom's Birthday, July 15th, repeats yearly") instead of three or four
+fragmented stops. What's genuinely still open: none of this has been
+verified by actually turning VoiceOver on and listening - the labels are
+structurally correct, not confirmed to *sound* right yet. Also still
+open: a check against iOS's own system-level "Larger Text" accessibility
+setting, which can go further than this app's own Large font tier.
 
 ---
 
@@ -443,9 +450,9 @@ Current status, as of this writing:
 - **Notifications**: working and tested on-device - see
   [Section 5](#5-notifications--badge-behavior) for the badge design
   decisions specifically.
-- **Accessibility**: color contrast pass complete and verified (see
-  [Section 6](#6-color-accessibility)); VoiceOver labeling not yet
-  started.
+- **Accessibility**: color contrast pass complete and verified; VoiceOver
+  labeling complete across all 15 screens, not yet verified on-device
+  (see [Section 6](#6-color-accessibility)).
 - **TypeScript**: `npx tsc --noEmit` currently returns zero errors
   across the whole project.
 - **Splash screen**: configured - shows the app icon (logo on the
@@ -473,5 +480,7 @@ Current status, as of this writing:
   bigger project on top of Expo, not a quick add.
 - **Timezone handling** for recurring events and habit resets - untested
   if the app is ever used while traveling across timezones.
-- **VoiceOver labeling** - the second half of the accessibility pass
-  (see [Section 6](#6-color-accessibility)), not started.
+- **VoiceOver on-device verification** - labeling is done (see
+  [Section 6](#6-color-accessibility)); still needs a real pass with
+  VoiceOver turned on to confirm it actually sounds right, screen by
+  screen.

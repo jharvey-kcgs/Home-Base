@@ -28,7 +28,7 @@ export default function SettingsScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="Back to Home Base">
           <Text style={styles.back}>‹ Home Base</Text>
         </TouchableOpacity>
         <Text style={styles.title} pointerEvents="none">
@@ -39,7 +39,14 @@ export default function SettingsScreen({ navigation }: any) {
 
       <View style={[styles.list, { width: '100%', maxWidth: maxContentWidth, alignSelf: 'center' }]}>
         {ROWS.map((row) => (
-          <TouchableOpacity key={row.route} style={styles.row} onPress={() => navigation.navigate(row.route)}>
+          <TouchableOpacity
+            key={row.route}
+            style={styles.row}
+            onPress={() => navigation.navigate(row.route)}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel={row.label}
+          >
             <Text style={styles.rowLabel}>{row.label}</Text>
             <Text style={styles.chevron}>›</Text>
           </TouchableOpacity>

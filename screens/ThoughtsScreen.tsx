@@ -97,13 +97,13 @@ export default function ThoughtsScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="Back to Home Base">
           <Text style={styles.back}>‹ Home Base</Text>
         </TouchableOpacity>
         <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
           Thought Base
         </Text>
-        <TouchableOpacity onPress={handleMenu} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}>
+        <TouchableOpacity onPress={handleMenu} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="More options">
           <Text style={styles.menuDots}>•••</Text>
         </TouchableOpacity>
       </View>
@@ -113,7 +113,13 @@ export default function ThoughtsScreen({ navigation }: any) {
         data={thoughts}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.row} onPress={() => openExisting(item)}>
+          <TouchableOpacity
+            style={styles.row}
+            onPress={() => openExisting(item)}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel={`${item.title}${item.body ? `, ${item.body}` : ''}`}
+          >
             <Text style={styles.rowTitle}>{item.title}</Text>
             {item.body ? (
               <Text style={styles.rowPreview} numberOfLines={1}>
@@ -137,7 +143,7 @@ export default function ThoughtsScreen({ navigation }: any) {
             </TouchableOpacity>
             <View style={styles.editorActions}>
               {editing && (
-                <TouchableOpacity onPress={handleDeleteMenu} style={{ marginRight: 16 }}>
+                <TouchableOpacity onPress={handleDeleteMenu} style={{ marginRight: 16 }} accessibilityRole="button" accessibilityLabel="Delete options">
                   <Text style={styles.menuDots}>•••</Text>
                 </TouchableOpacity>
               )}
@@ -151,6 +157,7 @@ export default function ThoughtsScreen({ navigation }: any) {
               placeholderTextColor={theme.colors.textMuted}
               style={styles.titleInput}
               placeholder="Title"
+              accessibilityLabel="Title"
               value={editTitle}
               onChangeText={setEditTitle}
             />
@@ -158,6 +165,7 @@ export default function ThoughtsScreen({ navigation }: any) {
               placeholderTextColor={theme.colors.textMuted}
               style={styles.bodyInput}
               placeholder="Write your thought..."
+              accessibilityLabel="Thought body"
               value={editBody}
               onChangeText={setEditBody}
               multiline

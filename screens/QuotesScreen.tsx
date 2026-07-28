@@ -196,13 +196,13 @@ export default function QuotesScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="Back to Home Base">
           <Text style={styles.back}>‹ Home Base</Text>
         </TouchableOpacity>
         <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
           Quote Base
         </Text>
-        <TouchableOpacity onPress={handleMenu} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}>
+        <TouchableOpacity onPress={handleMenu} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="More options">
           <Text style={styles.menuDots}>•••</Text>
         </TouchableOpacity>
       </View>
@@ -213,7 +213,13 @@ export default function QuotesScreen({ navigation }: any) {
         keyExtractor={(item) => item.id}
         renderSectionHeader={({ section }) => <Text style={styles.sectionHeader}>{section.title}</Text>}
         renderItem={({ item }) => (
-          <TouchableOpacity style={styles.row} onPress={() => openExisting(item)}>
+          <TouchableOpacity
+            style={styles.row}
+            onPress={() => openExisting(item)}
+            accessible={true}
+            accessibilityRole="button"
+            accessibilityLabel={`${item.text}${item.author ? `, by ${item.author}` : ''}`}
+          >
             <Text style={styles.quoteText} numberOfLines={3}>
               {item.text}
             </Text>
@@ -237,7 +243,7 @@ export default function QuotesScreen({ navigation }: any) {
             <Text style={styles.editorTitle}>{editingId ? 'Edit Quote' : 'New Quote'}</Text>
             <View style={styles.editorActions}>
               {editingId && (
-                <TouchableOpacity onPress={handleDeleteMenu} style={{ marginRight: 16 }}>
+                <TouchableOpacity onPress={handleDeleteMenu} style={{ marginRight: 16 }} accessibilityRole="button" accessibilityLabel="Delete options">
                   <Text style={styles.menuDots}>•••</Text>
                 </TouchableOpacity>
               )}
@@ -249,7 +255,7 @@ export default function QuotesScreen({ navigation }: any) {
 
           <ScrollView style={[styles.form, { width: '100%', maxWidth: maxContentWidth, alignSelf: 'center' }]} keyboardShouldPersistTaps="handled">
             <Text style={styles.fieldLabel}>Author / Publication (optional)</Text>
-            <TextInput placeholderTextColor={theme.colors.textMuted} style={styles.input} placeholder="Author or source" value={author} onChangeText={setAuthor} />
+            <TextInput placeholderTextColor={theme.colors.textMuted} style={styles.input} placeholder="Author or source" value={author} onChangeText={setAuthor} accessibilityLabel="Author or source" />
 
             <Text style={styles.fieldLabel}>Quote</Text>
             <TextInput
@@ -259,6 +265,7 @@ export default function QuotesScreen({ navigation }: any) {
               value={text}
               onChangeText={setText}
               multiline
+              accessibilityLabel="Quote text"
             />
 
             <Text style={styles.fieldLabel}>Notes</Text>
@@ -269,6 +276,7 @@ export default function QuotesScreen({ navigation }: any) {
               value={notes}
               onChangeText={setNotes}
               multiline
+              accessibilityLabel="Notes"
             />
 
             <Text style={styles.fieldLabel}>Category</Text>
@@ -276,6 +284,9 @@ export default function QuotesScreen({ navigation }: any) {
               <TouchableOpacity
                 style={[styles.chip, categoryId === null && styles.chipActive]}
                 onPress={() => setCategoryId(null)}
+                accessibilityRole="button"
+                accessibilityState={{ selected: categoryId === null }}
+                accessibilityLabel="No category"
               >
                 <Text style={[styles.chipText, categoryId === null && styles.chipTextActive]}>None</Text>
               </TouchableOpacity>
@@ -284,6 +295,9 @@ export default function QuotesScreen({ navigation }: any) {
                   key={c.id}
                   style={[styles.chip, categoryId === c.id && styles.chipActive]}
                   onPress={() => setCategoryId(c.id)}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: categoryId === c.id }}
+                  accessibilityLabel={c.name}
                 >
                   <Text style={[styles.chipText, categoryId === c.id && styles.chipTextActive]}>{c.name}</Text>
                 </TouchableOpacity>
@@ -316,6 +330,7 @@ export default function QuotesScreen({ navigation }: any) {
               value={newCategoryName}
               onChangeText={setNewCategoryName}
               autoFocus
+              accessibilityLabel="Category name"
             />
           </View>
         </KeyboardAvoidingView>
@@ -344,6 +359,7 @@ export default function QuotesScreen({ navigation }: any) {
               value={renameText}
               onChangeText={setRenameText}
               autoFocus
+              accessibilityLabel="Category name"
             />
           </View>
         </KeyboardAvoidingView>

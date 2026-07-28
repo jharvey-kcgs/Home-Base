@@ -39,11 +39,11 @@ export default function OnboardingScreen({ onDone }: { onDone: (wantsTour: boole
             A short look at what each widget does and how editing works - takes about a minute.
           </Text>
 
-          <TouchableOpacity style={styles.button} onPress={() => onDone(true)}>
+          <TouchableOpacity style={styles.button} onPress={() => onDone(true)} accessibilityRole="button">
             <Text style={styles.buttonText}>Yes, show me around</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.secondaryButton} onPress={() => onDone(false)}>
+          <TouchableOpacity style={styles.secondaryButton} onPress={() => onDone(false)} accessibilityRole="button">
             <Text style={styles.secondaryButtonText}>No thanks, take me in</Text>
           </TouchableOpacity>
         </View>
@@ -68,6 +68,7 @@ export default function OnboardingScreen({ onDone }: { onDone: (wantsTour: boole
             autoFocus
             onSubmitEditing={handleContinue}
             returnKeyType="done"
+            accessibilityLabel="Your name"
           />
 
           {name.trim().length > 0 && (
@@ -78,6 +79,8 @@ export default function OnboardingScreen({ onDone }: { onDone: (wantsTour: boole
             style={[styles.button, !name.trim() && styles.buttonDisabled]}
             onPress={handleContinue}
             disabled={!name.trim()}
+            accessibilityRole="button"
+            accessibilityState={{ disabled: !name.trim() }}
           >
             <Text style={styles.buttonText}>Continue</Text>
           </TouchableOpacity>

@@ -80,6 +80,8 @@ export default function HomeScreen({ navigation }: any) {
           onPress={() => navigation.navigate('Settings')}
           style={styles.headerSide}
           hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}
+          accessibilityRole="button"
+          accessibilityLabel="Settings"
         >
           <Text style={[styles.headerIcon, { fontSize: 24 * scale }]}>✿</Text>
         </TouchableOpacity>
@@ -94,6 +96,8 @@ export default function HomeScreen({ navigation }: any) {
           onPress={load}
           style={[styles.headerSide, { alignItems: 'flex-end' }]}
           hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}
+          accessibilityRole="button"
+          accessibilityLabel="Refresh Home screen"
         >
           <Text style={[styles.headerIcon, { fontSize: 24 * scale }]}>⌂</Text>
         </TouchableOpacity>
@@ -105,6 +109,10 @@ export default function HomeScreen({ navigation }: any) {
           <TouchableOpacity
             style={[styles.cardFull, { padding: 18 * scale, marginBottom: 14 * scale }]}
             onPress={() => navigation.navigate('Events')}
+            accessibilityRole="button"
+            accessibilityLabel={`Event Base. ${dateStr}. ${
+              events.length > 0 ? events.map((e) => e.name).join(', ') : 'No events today'
+            }`}
           >
             <Text style={[styles.bigDate, { fontSize: 24 * scale }]}>{dateStr}</Text>
             {events.length > 0 ? (
@@ -123,6 +131,8 @@ export default function HomeScreen({ navigation }: any) {
             <TouchableOpacity
               style={[styles.cardHalf, { padding: 18 * scale, minHeight: 140 * scale }]}
               onPress={() => navigation.navigate('Quotes')}
+              accessibilityRole="button"
+              accessibilityLabel={`Quote Base. Quote of the day: ${quote ? quote.text : 'Add a quote'}`}
             >
               <Text style={[styles.cardTitle, { fontSize: 18 * scale }]}>Quote of the Day</Text>
               <Text style={[styles.quoteText, { fontSize: 14 * scale }]} numberOfLines={5}>
@@ -133,6 +143,10 @@ export default function HomeScreen({ navigation }: any) {
             <TouchableOpacity
               style={[styles.cardHalf, { padding: 18 * scale, minHeight: 140 * scale }]}
               onPress={() => navigation.navigate('Tasks')}
+              accessibilityRole="button"
+              accessibilityLabel={`Task Base. ${
+                tasks.length > 0 ? tasks.map((t) => t.name).join(', ') : 'Nothing pending'
+              }`}
             >
               <Text style={[styles.cardTitle, { fontSize: 18 * scale }]}>Tasks</Text>
               {tasks.length > 0 ? (
@@ -151,6 +165,11 @@ export default function HomeScreen({ navigation }: any) {
           <TouchableOpacity
             style={[styles.cardFull, { padding: 18 * scale, marginBottom: 14 * scale }]}
             onPress={() => navigation.navigate('Habits')}
+            accessibilityRole="button"
+            accessibilityLabel={`Habit Base. ${[
+              ...sliders.map((s) => `${s.name}: ${s.value} of ${s.maxValue} ${s.unit}`),
+              ...checks.map((c) => `${c.name}: ${c.isChecked ? 'yes' : 'no'}`),
+            ].join(', ')}`}
           >
             <Text style={[styles.cardTitle, { fontSize: 18 * scale }]}>Habits</Text>
             <View style={styles.habitRow}>
@@ -174,6 +193,10 @@ export default function HomeScreen({ navigation }: any) {
             <TouchableOpacity
               style={[styles.cardHalf, { padding: 18 * scale, minHeight: 140 * scale }]}
               onPress={() => navigation.navigate('Alerts')}
+              accessibilityRole="button"
+              accessibilityLabel={`Alert Base. ${
+                alerts.length > 0 ? alerts.map((a) => a.name).join(', ') : 'Nothing set'
+              }`}
             >
               <Text style={[styles.cardTitle, { fontSize: 18 * scale }]}>Alerts</Text>
               {alerts.length > 0 ? (
@@ -190,6 +213,10 @@ export default function HomeScreen({ navigation }: any) {
             <TouchableOpacity
               style={[styles.cardHalf, { padding: 18 * scale, minHeight: 140 * scale }]}
               onPress={() => navigation.navigate('Thoughts')}
+              accessibilityRole="button"
+              accessibilityLabel={`Thought Base. ${
+                thoughts.length > 0 ? thoughts.map((t) => t.title).join(', ') : 'Nothing yet'
+              }`}
             >
               <Text style={[styles.cardTitle, { fontSize: 18 * scale }]}>Thoughts</Text>
               {thoughts.length > 0 ? (

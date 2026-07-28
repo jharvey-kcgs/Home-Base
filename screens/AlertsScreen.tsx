@@ -231,13 +231,13 @@ export default function AlertsScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="Back to Home Base">
           <Text style={styles.back}>‹ Home Base</Text>
         </TouchableOpacity>
         <Text style={styles.title} numberOfLines={1} ellipsizeMode="tail">
           Alert Base
         </Text>
-        <TouchableOpacity onPress={handleMenu} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}>
+        <TouchableOpacity onPress={handleMenu} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="More options">
           <Text style={styles.menuDots}>•••</Text>
         </TouchableOpacity>
       </View>
@@ -248,10 +248,31 @@ export default function AlertsScreen({ navigation }: any) {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <View style={styles.row}>
-            <TouchableOpacity onPress={() => toggleAlertComplete(item.id).then(load)}>
+            <TouchableOpacity
+              onPress={() => toggleAlertComplete(item.id).then(load)}
+              accessibilityRole="checkbox"
+              accessibilityState={{ checked: item.isCompleted }}
+              accessibilityLabel={`Mark ${item.name} as ${item.isCompleted ? 'not done' : 'done'}`}
+            >
               <Text style={styles.checkbox}>{item.isCompleted ? '☑' : '☐'}</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.rowMain} onPress={() => openExisting(item)}>
+            <TouchableOpacity
+              style={styles.rowMain}
+              onPress={() => openExisting(item)}
+              accessible={true}
+              accessibilityRole="button"
+              accessibilityLabel={`${item.name}, ${item.date}${
+                item.isAllDay ? ', all day' : item.time ? `, ${item.time}` : ''
+              }${
+                item.notificationOffsetMinutes != null
+                  ? item.notificationOffsetMinutes === 0
+                    ? ', notifies at the time'
+                    : `, notifies ${item.notificationOffsetMinutes} minutes before`
+                  : ''
+              }${item.recurrence !== 'none' ? `, ${RECURRENCE_LABELS[item.recurrence]}` : ''}${
+                item.isCompleted ? ', done' : ''
+              }`}
+            >
               <Text style={[styles.rowTitle, item.isCompleted && styles.doneText]}>{item.name}</Text>
               <Text style={styles.rowSubtitle}>
                 {item.date}
@@ -280,7 +301,7 @@ export default function AlertsScreen({ navigation }: any) {
             <Text style={styles.editorTitle}>{editingId ? 'Edit Alert' : 'New Alert'}</Text>
             <View style={styles.editorActions}>
               {editingId && (
-                <TouchableOpacity onPress={handleDeleteMenu} style={{ marginRight: 16 }}>
+                <TouchableOpacity onPress={handleDeleteMenu} style={{ marginRight: 16 }} accessibilityRole="button" accessibilityLabel="Delete options">
                   <Text style={styles.menuDots}>•••</Text>
                 </TouchableOpacity>
               )}
@@ -291,15 +312,25 @@ export default function AlertsScreen({ navigation }: any) {
           </View>
 
           <ScrollView style={[styles.form, { width: '100%', maxWidth: maxContentWidth, alignSelf: 'center' }]} keyboardShouldPersistTaps="handled">
-            <TextInput placeholderTextColor={theme.colors.textMuted} style={styles.input} placeholder="What's the alert?" value={name} onChangeText={setName} />
+            <TextInput placeholderTextColor={theme.colors.textMuted} style={styles.input} placeholder="What's the alert?" value={name} onChangeText={setName} accessibilityLabel="Alert name" />
 
             <View style={styles.allDayRow}>
               <Text style={styles.fieldLabel}>All Day</Text>
-              <Switch value={isAllDay} onValueChange={setIsAllDay} trackColor={{ true: theme.colors.accent }} />
+              <Switch
+                value={isAllDay}
+                onValueChange={setIsAllDay}
+                trackColor={{ true: theme.colors.accent }}
+                accessibilityLabel="All Day"
+              />
             </View>
 
             <Text style={styles.fieldLabel}>Date (required)</Text>
-            <TouchableOpacity style={styles.dateButton} onPress={() => setShowDatePicker(true)}>
+            <TouchableOpacity
+              style={styles.dateButton}
+              onPress={() => setShowDatePicker(true)}
+              accessibilityRole="button"
+              accessibilityLabel={`Alert date: ${date.toLocaleDateString()}`}
+            >
               <Text style={{ fontFamily: REGULAR }}>{date.toLocaleDateString()}</Text>
             </TouchableOpacity>
             {showDatePicker && (
@@ -317,7 +348,12 @@ export default function AlertsScreen({ navigation }: any) {
             {!isAllDay && (
               <>
                 <Text style={styles.fieldLabel}>Time (required)</Text>
-                <TouchableOpacity style={styles.dateButton} onPress={() => setShowTimePicker(true)}>
+                <TouchableOpacity
+                  style={styles.dateButton}
+                  onPress={() => setShowTimePicker(true)}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Alert time: ${time.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`}
+                >
                   <Text style={{ fontFamily: REGULAR }}>
                     {time.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}
                   </Text>
@@ -341,6 +377,9 @@ export default function AlertsScreen({ navigation }: any) {
                       key={m}
                       style={[styles.chip, notificationOffset === m && styles.chipActive]}
                       onPress={() => setNotificationOffset(m)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: notificationOffset === m }}
+                      accessibilityLabel={m === 0 ? 'At the time' : `${m} minutes before`}
                     >
                       <Text style={[styles.chipText, notificationOffset === m && styles.chipTextActive]}>
                         {m === 0 ? 'At the time' : `${m} min before`}
@@ -356,6 +395,9 @@ export default function AlertsScreen({ navigation }: any) {
                       key={r}
                       style={[styles.chip, recurrence === r && styles.chipActive]}
                       onPress={() => setRecurrence(r)}
+                      accessibilityRole="button"
+                      accessibilityState={{ selected: recurrence === r }}
+                      accessibilityLabel={RECURRENCE_LABELS[r]}
                     >
                       <Text style={[styles.chipText, recurrence === r && styles.chipTextActive]}>
                         {RECURRENCE_LABELS[r]}
@@ -371,6 +413,7 @@ export default function AlertsScreen({ navigation }: any) {
             placeholderTextColor={theme.colors.textMuted}
               style={[styles.input, styles.multilineInput]}
               placeholder="Any notes..."
+            accessibilityLabel="Notes"
               value={notes}
               onChangeText={setNotes}
               multiline

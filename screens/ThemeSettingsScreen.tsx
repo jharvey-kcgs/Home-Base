@@ -36,7 +36,7 @@ export default function ThemeSettingsScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="Back to Settings">
           <Text style={styles.back}>‹ Settings</Text>
         </TouchableOpacity>
         <Text style={styles.title} pointerEvents="none">
@@ -55,6 +55,7 @@ export default function ThemeSettingsScreen({ navigation }: any) {
             value={settings.themeMode === 'dark'}
             onValueChange={(v) => apply({ themeMode: v ? 'dark' : 'light' })}
             trackColor={{ true: theme.colors.accent }}
+            accessibilityLabel="Dark Mode"
           />
         </View>
 
@@ -66,6 +67,9 @@ export default function ThemeSettingsScreen({ navigation }: any) {
                 key={size}
                 style={[styles.chip, settings.fontSize === size && styles.chipActive]}
                 onPress={() => apply({ fontSize: size })}
+                accessibilityRole="button"
+                accessibilityState={{ selected: settings.fontSize === size }}
+                accessibilityLabel={size === 'small' ? 'Small' : size === 'default' ? 'Default' : 'Large'}
               >
                 <Text style={[styles.chipText, settings.fontSize === size && styles.chipTextActive]}>
                   {size === 'small' ? 'Small' : size === 'default' ? 'Default' : 'Large'}
@@ -91,6 +95,9 @@ export default function ThemeSettingsScreen({ navigation }: any) {
                     settings.themeColor === c.hex && styles.swatchActive,
                   ]}
                   onPress={() => apply({ themeColor: c.hex })}
+                  accessibilityRole="button"
+                  accessibilityState={{ selected: settings.themeColor === c.hex }}
+                  accessibilityLabel={`${c.name} theme color`}
                 />
                 <Text style={styles.swatchLabel}>{c.name}</Text>
               </View>

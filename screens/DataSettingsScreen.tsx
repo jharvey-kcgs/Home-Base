@@ -137,7 +137,7 @@ export default function DataSettingsScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="Back to Settings">
           <Text style={styles.back}>‹ Settings</Text>
         </TouchableOpacity>
         <Text style={styles.title} pointerEvents="none">
@@ -156,7 +156,13 @@ export default function DataSettingsScreen({ navigation }: any) {
           Everything in Home Base - events, quotes, tasks, habits, alerts, thoughts, and settings - as one
           backup file you can save, email to yourself, or AirDrop somewhere safe.
         </Text>
-        <TouchableOpacity style={styles.button} onPress={handleExport} disabled={isWorking}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={handleExport}
+          disabled={isWorking}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: isWorking }}
+        >
           <Text style={styles.buttonText}>Share Backup</Text>
         </TouchableOpacity>
 
@@ -179,6 +185,8 @@ export default function DataSettingsScreen({ navigation }: any) {
           style={[styles.button, (!importText.trim() || isWorking) && styles.buttonDisabled]}
           onPress={handleImport}
           disabled={!importText.trim() || isWorking}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: !importText.trim() || isWorking }}
         >
           <Text style={styles.buttonText}>Restore From This Backup</Text>
         </TouchableOpacity>
@@ -188,7 +196,14 @@ export default function DataSettingsScreen({ navigation }: any) {
           Permanently deletes everything in Home Base. There's no undo - export a backup above first if
           there's any chance you'll want this data again.
         </Text>
-        <TouchableOpacity style={styles.dangerButton} onPress={handleResetData} disabled={isWorking}>
+        <TouchableOpacity
+          style={styles.dangerButton}
+          onPress={handleResetData}
+          disabled={isWorking}
+          accessibilityRole="button"
+          accessibilityState={{ disabled: isWorking }}
+          accessibilityHint="Permanently deletes all app data. Asks for confirmation first."
+        >
           <Text style={styles.dangerButtonText}>Reset App Data</Text>
         </TouchableOpacity>
       </ScrollView>
