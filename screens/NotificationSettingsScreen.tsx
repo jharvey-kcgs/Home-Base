@@ -7,7 +7,7 @@ import { useTheme, ThemeColors } from '../lib/theme';
 import { useResponsive } from '../lib/responsive';
 import { useFocusEffect } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { getSettings, updateSettings } from '../lib/storage';
+import { getSettings, updateSettings, toLocalDateString } from '../lib/storage';
 import { AppSettings, DEFAULT_SETTINGS } from '../types/models';
 
 const REGULAR = 'PlayfairDisplay_400Regular';
@@ -94,7 +94,7 @@ export default function NotificationSettingsScreen({ navigation }: any) {
             mode="date"
             onChange={(_, selected) => {
               setShowStartPicker(Platform.OS === 'ios');
-              if (selected) apply({ vacationStart: selected.toISOString().slice(0, 10) });
+              if (selected) apply({ vacationStart: toLocalDateString(selected) });
             }}
           />
         )}
@@ -117,7 +117,7 @@ export default function NotificationSettingsScreen({ navigation }: any) {
             mode="date"
             onChange={(_, selected) => {
               setShowEndPicker(Platform.OS === 'ios');
-              if (selected) apply({ vacationEnd: selected.toISOString().slice(0, 10) });
+              if (selected) apply({ vacationEnd: toLocalDateString(selected) });
             }}
           />
         )}

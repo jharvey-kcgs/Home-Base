@@ -32,6 +32,7 @@ import {
   deleteAlert,
   setAlertNotificationId,
   getSettings,
+  toLocalDateString,
 } from '../lib/storage';
 import { scheduleAlertNotification, cancelAlertNotification, ensureNotificationPermission, getAlertScheduleWarning } from '../lib/notifications';
 import {
@@ -216,7 +217,7 @@ export default function EventsScreen({ navigation }: any) {
   const handleSave = async () => {
     const trimmed = name.trim();
     if (!trimmed) return;
-    const eventDate = date.toISOString().slice(0, 10);
+    const eventDate = toLocalDateString(date);
 
     const finalLinkedAlertId = await syncReminder(eventDate, trimmed);
 

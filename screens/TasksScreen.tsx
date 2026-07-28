@@ -18,7 +18,7 @@ import { useTheme, ThemeColors } from '../lib/theme';
 import { useResponsive } from '../lib/responsive';
 import { useFocusEffect } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { getTasks, addTask, updateTask, toggleTaskDone, deleteTask, clearCompletedTasks } from '../lib/storage';
+import { getTasks, addTask, updateTask, toggleTaskDone, deleteTask, clearCompletedTasks, toLocalDateString } from '../lib/storage';
 import { Task, Priority, PRIORITY_LABELS } from '../types/models';
 
 const REGULAR = 'PlayfairDisplay_400Regular';
@@ -125,7 +125,7 @@ export default function TasksScreen({ navigation }: any) {
     const payload = {
       name: trimmed,
       priority,
-      dueDate: dueDate ? dueDate.toISOString().slice(0, 10) : null,
+      dueDate: dueDate ? toLocalDateString(dueDate) : null,
       notes,
     };
     if (editingId) {

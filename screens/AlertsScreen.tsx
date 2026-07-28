@@ -19,7 +19,7 @@ import { useTheme, ThemeColors } from '../lib/theme';
 import { useResponsive } from '../lib/responsive';
 import { useFocusEffect } from '@react-navigation/native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { getAlerts, addAlert, updateAlert, setAlertNotificationId, toggleAlertComplete, deleteAlert, getSettings, clearCompletedAlerts } from '../lib/storage';
+import { getAlerts, addAlert, updateAlert, setAlertNotificationId, toggleAlertComplete, deleteAlert, getSettings, clearCompletedAlerts, toLocalDateString } from '../lib/storage';
 import { scheduleAlertNotification, cancelAlertNotification, ensureNotificationPermission, getAlertScheduleWarning } from '../lib/notifications';
 import {
   Alert as AlertModel,
@@ -136,7 +136,7 @@ export default function AlertsScreen({ navigation }: any) {
       const payload = {
         name: trimmed,
         isAllDay,
-        date: date.toISOString().slice(0, 10),
+        date: toLocalDateString(date),
         time: timeStr,
         notes,
         notificationOffsetMinutes: isAllDay ? null : notificationOffset,

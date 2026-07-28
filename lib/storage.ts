@@ -54,7 +54,25 @@ async function saveAll<T>(key: string, items: T[]): Promise<void> {
 }
 
 const newId = () => uuidv4();
-const todayStr = () => new Date().toISOString().slice(0, 10); // "YYYY-MM-DD"
+
+/**
+ * Formats a Date as "YYYY-MM-DD" using its LOCAL calendar fields, never
+ * UTC. This matters a lot: `date.toISOString().slice(0, 10)` converts to
+ * UTC first, which silently rolls the date forward by one once local
+ * evening time crosses midnight UTC (true for most of the evening in US
+ * timezones) - the exact bug that caused events/tasks/alerts saved with
+ * "today's" date to come out as tomorrow. Every place in this app that
+ * turns a Date into a stored "YYYY-MM-DD" string must go through this,
+ * not `.toISOString()`.
+ */
+export function toLocalDateString(d: Date = new Date()): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+const todayStr = () => toLocalDateString();
 
 // --- Backup: export / import everything ---
 export interface BackupPayload {
@@ -157,7 +175,7 @@ function eventMatchesDate(event: Event, target: Date): boolean {
     case 'yearly':
       return anchor.getMonth() === target.getMonth() && anchor.getDate() === target.getDate();
     default:
-      return event.date === target.toISOString().slice(0, 10);
+      return event.date === toLocalDateString(target);
   }
 }
 
