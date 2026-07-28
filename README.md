@@ -134,6 +134,7 @@ plain `npm install` pulls all of them in one shot. **If it throws
 | `@react-native-community/slider` | Habit Base's Progress sliders |
 | `react-native-get-random-values`, `uuid` | Generates unique IDs for every stored item |
 | `expo-notifications` | Local notifications for Alert Base — see [Section 5](#5-notifications--badge-behavior) |
+| `expo-splash-screen` | Controls the launch splash - held visible until fonts finish loading |
 | `expo-font`, `@expo-google-fonts/playfair-display` | The app's Playfair Display typeface |
 
 If you ever need to add a **new** native dependency, always use
@@ -160,9 +161,11 @@ involved.
 
 ```
 App.tsx                          Navigation entry point, ThemeProvider,
-                                  font loading, first-launch onboarding
-                                  gate, and the app-wide badge-clearing
-                                  listeners (see Section 5)
+                                  font loading, the launch splash screen
+                                  (held until fonts are ready), first-
+                                  launch onboarding gate, and the
+                                  app-wide badge-clearing listeners (see
+                                  Section 5)
 
 screens/
   HomeScreen.tsx                  The dashboard - all 6 widget previews,
@@ -445,8 +448,10 @@ Current status, as of this writing:
   started.
 - **TypeScript**: `npx tsc --noEmit` currently returns zero errors
   across the whole project.
-- **Splash screen**: not yet configured - currently just the default
-  icon flash on launch, no dedicated `expo-splash-screen` setup.
+- **Splash screen**: configured - shows the app icon (logo on the
+  established cream background) via `expo-splash-screen`, held on screen
+  until fonts have finished loading rather than a fixed timer, so there's
+  no flash of the wrong font underneath it.
 - **App Store Connect metadata** (description, "What to Test" notes,
   privacy questionnaire guidance, support URL) - see `Path-To-Store.md`.
 - **Apple Developer Program enrollment** - not yet started.

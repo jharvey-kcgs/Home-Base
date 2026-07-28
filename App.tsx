@@ -1,7 +1,8 @@
 // App.tsx
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, StatusBar, AppState } from 'react-native';
+import { View, StatusBar, AppState } from 'react-native';
+import * as SplashScreen from 'expo-splash-screen';
 import * as Notifications from 'expo-notifications';
 import { NavigationContainer, DefaultTheme, DarkTheme, createNavigationContainerRef } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -33,6 +34,12 @@ import { ThemeProvider, useTheme } from './lib/theme';
 
 const Stack = createNativeStackNavigator();
 const navigationRef = createNavigationContainerRef<any>();
+
+// Keep the native splash screen visible until fonts have loaded - without
+// this, Expo hides it automatically as soon as the JS bundle starts,
+// which is before Playfair Display is ready and would show a flash of
+// the system font first.
+SplashScreen.preventAutoHideAsync().catch(() => {});
 
 function RootGate() {
   const { theme } = useTheme();
@@ -160,12 +167,16 @@ export default function App() {
     PlayfairDisplay_400Regular_Italic,
   });
 
+  useEffect(() => {
+    if (fontsLoaded) {
+      SplashScreen.hideAsync().catch(() => {});
+    }
+  }, [fontsLoaded]);
+
   if (!fontsLoaded) {
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-        <Text>Loading…</Text>
-      </View>
-    );
+    // Native splash screen is still showing on top of this - no need for
+    // our own loading UI underneath it.
+    return null;
   }
 
   return (
