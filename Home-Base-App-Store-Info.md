@@ -146,30 +146,23 @@ specific question rather than speed-running it.
 
 ---
 
-## 6. Support URL / Contact / Marketing URL — needs your real values
-
-*(These are the fields League Base already had real answers for, since
-that repo is public. Home Base doesn't have an equivalent yet — fill
-these in before submitting, since Apple requires a working Support URL.)*
+## 6. Support URL / Contact / Marketing URL
 
 **Contact email**:
 ```
-[your email here]
+JHarvey.appdeveloper@gmail.com
 ```
 
-**Support URL**: Apple requires this — something publicly viewable
-without a login, where a user (or Apple's reviewer) could theoretically
-reach you or find basic info about the app. Options, roughly easiest to
-most effort:
-- A public GitHub repo for Home Base (like League Base already has) —
-  works even with just this README in it
-- A single static page (a free GitHub Pages site, a Notion page set to
-  public, etc.)
-- Not your personal email as a bare URL — Apple wants an actual page,
-  not just a `mailto:`
+**Support URL**:
+```
+https://github.com/jharvey-kcgs/Home-Base
+```
+Before pointing Apple (or anyone else) at this link, confirm the repo's
+`README.md` is actually pushed and current — same caution League Base's
+own doc called out for that project, and it applies here too.
 
-**Marketing URL**: optional in App Store Connect — the same Support URL
-works here too if asked; no need for a second page.
+**Marketing URL**: same GitHub link works here too if App Store Connect
+asks for one separately — no need for a second page.
 
 ---
 
