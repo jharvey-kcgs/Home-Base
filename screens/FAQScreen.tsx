@@ -64,9 +64,9 @@ export default function FAQScreen({ navigation }: any) {
             accent color.
           </Item>
           <Item name="Can I back up my data?">
-            Yes - Settings → Data → Share Backup gives you a backup you can save, email to yourself, or
-            AirDrop somewhere safe. Restoring replaces everything currently in the app, so double-check
-            before confirming.
+            Yes - Settings → Data → Export Backup creates a real backup file you can save to Files, email
+            to yourself, or AirDrop somewhere safe. Restoring is Choose Backup File, which replaces
+            everything currently in the app, so double-check before confirming.
           </Item>
           <Item name="Why won't my reminder notify me?">
             Two common reasons. First: Home Base only asks for notification permission the first time you

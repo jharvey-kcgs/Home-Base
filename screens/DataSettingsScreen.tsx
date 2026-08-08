@@ -1,22 +1,19 @@
 // screens/DataSettingsScreen.tsx
 //
-// Backup/restore without any new native dependencies: export shares the
-// backup JSON through the OS share sheet (Messages, Mail, Notes, AirDrop,
-// Copy, etc. all work out of the box); import is a paste-the-text field.
-// Deliberately simple and text-based, since this is meant to be a
-// reliable safety net, not a place to introduce new failure points.
+// Backup/restore using real JSON files: export writes an actual .json
+// file and hands it to the native share sheet (Files, Mail, AirDrop,
+// etc. as a proper attachment); import opens the document picker so the
+// person selects that same file back. Requires expo-file-system,
+// expo-sharing, and expo-document-picker - added deliberately now that
+// the project's other dependencies are stable, in exchange for a much
+// more standard "export a file, import a file" experience than the
+// original paste-text version.
 
 import React, { useState, useMemo } from 'react';
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  StyleSheet,
-  SafeAreaView,
-  ScrollView,
-  Share,
-  Alert as RNAlert,
-} from 'react-native';
+import { View, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Alert as RNAlert } from 'react-native';
+import { File, Paths } from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
+import * as DocumentPicker from 'expo-document-picker';
 import Text from '../components/AppText';
 import { useTheme, ThemeColors } from '../lib/theme';
 import { useResponsive } from '../lib/responsive';
@@ -29,16 +26,26 @@ export default function DataSettingsScreen({ navigation }: any) {
   const { theme, refresh } = useTheme();
   const styles = useMemo(() => makeStyles(theme.colors), [theme.colors]);
   const { maxContentWidth } = useResponsive();
-  const [importText, setImportText] = useState('');
   const [isWorking, setIsWorking] = useState(false);
 
   const handleExport = async () => {
     setIsWorking(true);
     try {
       const json = await exportAllData();
-      await Share.share({
-        message: json,
-        title: 'Home Base Backup',
+      const fileName = `home-base-backup-${new Date().toISOString().slice(0, 10)}.json`;
+      const file = new File(Paths.document, fileName);
+      if (file.exists) file.delete();
+      file.create();
+      file.write(json);
+
+      const canShare = await Sharing.isAvailableAsync();
+      if (!canShare) {
+        RNAlert.alert('Sharing unavailable', "Your device doesn't support sharing files right now.");
+        return;
+      }
+      await Sharing.shareAsync(file.uri, {
+        mimeType: 'application/json',
+        dialogTitle: 'Save Home Base Backup',
       });
     } catch (err) {
       RNAlert.alert('Export failed', 'Something went wrong putting your backup together.');
@@ -47,22 +54,37 @@ export default function DataSettingsScreen({ navigation }: any) {
     }
   };
 
-  const handleImport = () => {
-    if (!importText.trim()) return;
+  const handleImport = async () => {
+    let picked: DocumentPicker.DocumentPickerResult;
+    try {
+      picked = await DocumentPicker.getDocumentAsync({
+        type: ['application/json', 'public.json', '*/*'],
+        copyToCacheDirectory: true,
+      });
+    } catch {
+      RNAlert.alert('Couldn\'t open file picker', 'Something went wrong trying to browse for a backup file.');
+      return;
+    }
+
+    if (picked.canceled || !picked.assets || picked.assets.length === 0) return;
+    const fileUri = picked.assets[0].uri;
+
     RNAlert.alert(
       'Replace all current data?',
-      'This will overwrite everything currently in Home Base with what\'s in this backup. This can\'t be undone.',
+      "This will overwrite everything currently in Home Base with what's in this backup file. This can't be undone.",
       [
         { text: 'Cancel', style: 'cancel' },
-        { text: 'Replace Everything', style: 'destructive', onPress: runImport },
+        { text: 'Replace Everything', style: 'destructive', onPress: () => runImport(fileUri) },
       ]
     );
   };
 
-  const runImport = async () => {
+  const runImport = async (fileUri: string) => {
     setIsWorking(true);
     try {
-      await importAllData(importText.trim());
+      const pickedFile = new File(fileUri);
+      const json = await pickedFile.text();
+      await importAllData(json);
 
       // Backed-up alerts reference OS notification IDs that don't carry
       // over - re-schedule anything that isn't completed so reminders
@@ -83,13 +105,12 @@ export default function DataSettingsScreen({ navigation }: any) {
         }
       }
 
-      setImportText('');
       await refresh(); // pushes the restored theme/font-size settings live immediately
       RNAlert.alert('Restored', 'Your backup has been restored. Head back to Home Base to see it.', [
         { text: 'OK', onPress: () => navigation.navigate('Home') },
       ]);
     } catch (err: any) {
-      RNAlert.alert('Import failed', err?.message || 'Could not read that backup.');
+      RNAlert.alert('Import failed', err?.message || 'Could not read that backup file.');
     } finally {
       setIsWorking(false);
     }
@@ -137,7 +158,13 @@ export default function DataSettingsScreen({ navigation }: any) {
   return (
     <SafeAreaView style={styles.safe}>
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerSide} hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }} accessibilityRole="button" accessibilityLabel="Back to Settings">
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.headerSide}
+          hitSlop={{ top: 14, bottom: 14, left: 14, right: 14 }}
+          accessibilityRole="button"
+          accessibilityLabel="Back to Settings"
+        >
           <Text style={styles.back}>‹ Settings</Text>
         </TouchableOpacity>
         <Text style={styles.title} pointerEvents="none">
@@ -149,12 +176,11 @@ export default function DataSettingsScreen({ navigation }: any) {
       <ScrollView
         style={{ width: '100%', maxWidth: maxContentWidth, alignSelf: 'center' }}
         contentContainerStyle={{ paddingBottom: 40 }}
-        keyboardShouldPersistTaps="handled"
       >
         <Text style={styles.sectionHeader}>Export</Text>
         <Text style={styles.note}>
-          Everything in Home Base - events, quotes, tasks, habits, alerts, thoughts, and settings - as one
-          backup file you can save, email to yourself, or AirDrop somewhere safe.
+          Everything in Home Base - events, quotes, tasks, habits, alerts, thoughts, and settings - as a
+          real backup file (.json) you can save to Files, email to yourself, or AirDrop somewhere safe.
         </Text>
         <TouchableOpacity
           style={styles.button}
@@ -163,32 +189,22 @@ export default function DataSettingsScreen({ navigation }: any) {
           accessibilityRole="button"
           accessibilityState={{ disabled: isWorking }}
         >
-          <Text style={styles.buttonText}>Share Backup</Text>
+          <Text style={styles.buttonText}>Export Backup</Text>
         </TouchableOpacity>
 
         <Text style={styles.sectionHeader}>Import</Text>
         <Text style={styles.note}>
-          Paste in backup text you saved earlier. This replaces everything currently in the app, so make
+          Choose a backup file you saved earlier. This replaces everything currently in the app, so make
           sure this is the backup you want.
         </Text>
-        <TextInput
-          style={styles.textArea}
-          placeholderTextColor={theme.colors.textMuted}
-          placeholder="Paste your backup here..."
-          value={importText}
-          onChangeText={setImportText}
-          multiline
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
         <TouchableOpacity
-          style={[styles.button, (!importText.trim() || isWorking) && styles.buttonDisabled]}
+          style={[styles.button, isWorking && styles.buttonDisabled]}
           onPress={handleImport}
-          disabled={!importText.trim() || isWorking}
+          disabled={isWorking}
           accessibilityRole="button"
-          accessibilityState={{ disabled: !importText.trim() || isWorking }}
+          accessibilityState={{ disabled: isWorking }}
         >
-          <Text style={styles.buttonText}>Restore From This Backup</Text>
+          <Text style={styles.buttonText}>Choose Backup File</Text>
         </TouchableOpacity>
 
         <Text style={styles.sectionHeader}>Reset</Text>
@@ -248,17 +264,4 @@ const makeStyles = (c: ThemeColors) =>
       marginBottom: 20,
     },
     dangerButtonText: { color: c.danger, fontFamily: REGULAR, fontSize: 15, fontWeight: '600' },
-    textArea: {
-      marginHorizontal: 16,
-      marginBottom: 12,
-      minHeight: 120,
-      borderWidth: 1,
-      borderColor: c.border,
-      borderRadius: 10,
-      padding: 12,
-      fontSize: 13,
-      fontFamily: 'Courier',
-      color: c.text,
-      textAlignVertical: 'top',
-    },
   });

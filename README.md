@@ -135,6 +135,9 @@ plain `npm install` pulls all of them in one shot. **If it throws
 | `react-native-get-random-values`, `uuid` | Generates unique IDs for every stored item |
 | `expo-notifications` | Local notifications for Alert Base — see [Section 5](#5-notifications--badge-behavior) |
 | `expo-splash-screen` | Controls the launch splash - held visible until fonts finish loading |
+| `expo-file-system` | Writes/reads the actual backup .json file for Settings → Data (uses the newer `File`/`Paths` API introduced in SDK 54 - the older `documentDirectory`/`writeAsStringAsync` functions most tutorials still show no longer exist) |
+| `expo-sharing` | Opens the native share sheet for exporting that backup file |
+| `expo-document-picker` | Lets the person pick a backup file to restore from |
 | `expo-font`, `@expo-google-fonts/playfair-display` | The app's Playfair Display typeface |
 
 If you ever need to add a **new** native dependency, always use
@@ -431,6 +434,28 @@ whatever's newest on npm instead of the SDK 54 this project actually
 depends on - accepting it reintroduces Gotcha #1's Node crash. Fix: get
 a clean `npm install` to finish successfully first, then `npx expo
 start` should launch directly with no prompt at all.
+
+### Gotcha #8: `expo-file-system`'s API completely changed in SDK 54
+
+Most tutorials and AI-generated examples for `expo-file-system` use
+`FileSystem.documentDirectory`, `FileSystem.writeAsStringAsync()`, and
+`FileSystem.EncodingType` - none of that exists anymore as of the
+version this project uses (19.x). It was replaced with a class-based
+API:
+
+```ts
+import { File, Paths } from 'expo-file-system';
+
+const file = new File(Paths.document, 'my-file.json');
+file.create();
+file.write(someString);   // synchronous, not a Promise
+const text = await file.text(); // reading is still async
+```
+`write()`/`create()`/`delete()` are synchronous now, not
+Promise-returning. If TypeScript says a property like
+`documentDirectory` "does not exist on type," this is almost certainly
+why - check the actually-installed version's own `.d.ts` files rather
+than trusting an older example.
 
 ---
 
