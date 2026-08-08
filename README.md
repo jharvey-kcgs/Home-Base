@@ -325,8 +325,8 @@ colors. The fix, in `lib/theme.tsx`:
   screen's own background (back links, "•••" menus, Save buttons,
   badges). If the raw accent color doesn't hit 4.5:1 against the current
   background, this walks its HSL *lightness* up or down (preserving hue)
-  until it does - so "Yellow" picked as an accent still reads as
-  recognizably yellow, just a shade deep enough to actually be legible,
+  until it does - so "Amber" picked as an accent still reads as
+  recognizably amber, just a shade deep enough to actually be legible,
   rather than falling back to a generic black or white.
 - **`accent`** stays the user's true, unmodified color choice - used for
   fills, swatches, and the habit slider tint, where contrast against a

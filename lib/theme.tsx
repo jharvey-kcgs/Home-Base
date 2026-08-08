@@ -102,7 +102,7 @@ function hslToHex(h: number, s: number, l: number): string {
 /**
  * Returns a version of `hex` guaranteed to meet WCAG AA (4.5:1) as text
  * against `backgroundHex`, adjusting lightness only - so the color still
- * reads as "that color" (Yellow stays yellow, just a deeper shade),
+ * reads as "that color" (Amber stays amber, just a deeper shade),
  * rather than swapping to a generic black/white fallback. Colors that
  * already pass are returned unchanged.
  */
