@@ -12,11 +12,9 @@
 //
 // APP_VARIANT=production (only ever set by `eas build --profile store`):
 // Store.
-//   name: "Home Base" (the real public name, matching
-//     Home-Base-App-Store-Info.md exactly — this is NOT "My Home Base";
-//     only the UAT variant gets a distinguishing name, so a real Store
-//     install and a TestFlight install look different side by side on
-//     your own device, but the actual public listing name stays plain)
+//   name: "Home Base: Plans & Habits" (the real public App Store name,
+//     matching Home-Base-App-Store-Info.md exactly - plain "Home Base"
+//     and "My Home Base" were both already taken by unrelated apps)
 //   bundleIdentifier / package: com.JHarvey.HomeBaseStore (new —
 //     register fresh, only ever used for real App Store submissions)
 //
@@ -28,7 +26,7 @@ const IS_STORE = process.env.APP_VARIANT === 'production';
 
 module.exports = {
   expo: {
-    name: IS_STORE ? 'Home Base' : 'Home Base (UAT)',
+    name: IS_STORE ? 'Home Base: Plans & Habits' : 'Home Base (UAT)',
     slug: 'home-base',
     version: '1.0.0',
     orientation: 'portrait',
@@ -78,7 +76,7 @@ module.exports = {
     ],
     extra: {
       eas: {
-          "projectId": "2d42ea73-9e51-455d-ae91-b1f26b9a1383"
+        projectId: '2d42ea73-9e51-455d-ae91-b1f26b9a1383',
       },
     },
   },

@@ -11,14 +11,17 @@ is a starting point, not a final draft you're locked into. A few fields
 
 **App Name**
 ```
-Home Base
+Home Base: Plans & Habits
 ```
 
 **Subtitle** (30 characters max — App Store only, optional for TestFlight)
 ```
-Plans, Habits & Reminders
+Events, Tasks & Reminders
 ```
-(25 characters)
+(25 characters — changed from the original "Plans, Habits & Reminders"
+since that now directly repeats words already in the App Name sitting
+right above it; this covers the widgets the Name doesn't mention instead
+of restating the ones it does)
 
 **SKU** (an internal identifier only you see — any unique string works)
 ```
@@ -32,11 +35,15 @@ English (U.S.)
 
 **Bundle ID**
 ```
-com.JHarvey.HomeBase
+com.JHarvey.HomeBaseStore
 ```
-(This should already be selectable in App Store Connect once your Apple
-Developer account and EAS have registered it — matches what's in
-`app.json`.)
+This is the **Store** variant specifically - not the same bundle ID
+you've been using for regular TestFlight builds
+(`com.JHarvey.HomeBase`). The two coexist in `app.config.js`, split by
+the `APP_VARIANT` environment variable; this one only gets produced by
+`eas build --profile store`, and should only ever be used for a real
+App Store submission through App Store Connect - never for day-to-day
+TestFlight testing.
 
 ---
 
