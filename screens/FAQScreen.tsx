@@ -114,6 +114,6 @@ const makeStyles = (c: ThemeColors) =>
     headerSide: { minWidth: 70, flexShrink: 0 },
     section: { marginTop: 8, paddingHorizontal: 16 },
     item: { marginBottom: 14 },
-    itemName: { fontSize: 15, fontFamily: REGULAR, fontWeight: '700', marginBottom: 2 },
+    itemName: { fontSize: 15, fontFamily: REGULAR, fontWeight: '700', color: c.accentReadable, marginBottom: 2 },
     itemBody: { fontSize: 14, fontFamily: REGULAR, color: c.textSecondary, lineHeight: 20 },
   });

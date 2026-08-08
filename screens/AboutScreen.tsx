@@ -117,7 +117,7 @@ const makeStyles = (c: ThemeColors) =>
     section: { marginTop: 20, paddingHorizontal: 16 },
     sectionTitle: { fontSize: 18, fontFamily: 'PlayfairDisplay_700Bold', fontWeight: '700', marginBottom: 10 },
     item: { marginBottom: 14 },
-    itemName: { fontSize: 15, fontFamily: REGULAR, fontWeight: '700', marginBottom: 2 },
+    itemName: { fontSize: 15, fontFamily: REGULAR, fontWeight: '700', color: c.accentReadable, marginBottom: 2 },
     itemBody: { fontSize: 14, fontFamily: REGULAR, color: c.textSecondary, lineHeight: 20 },
     paragraph: { fontSize: 14, fontFamily: REGULAR, color: c.textSecondary, lineHeight: 20 },
   });
