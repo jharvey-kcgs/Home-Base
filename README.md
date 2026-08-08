@@ -457,15 +457,43 @@ Promise-returning. If TypeScript says a property like
 why - check the actually-installed version's own `.d.ts` files rather
 than trusting an older example.
 
+### Gotcha #9: Two bundle identifiers, one codebase
+
+`app.config.js` (not `app.json` anymore) produces a different app
+depending on the `APP_VARIANT` environment variable:
+
+- **No env var set** (a plain `eas build`, or `eas build --profile
+  production`, `preview`, or `development`) → UAT variant,
+  `com.JHarvey.HomeBase`, named "Home Base (UAT)." This is every normal
+  build and always has been - nothing about day-to-day building changed.
+- **`APP_VARIANT=production`** (only ever set by `eas build --profile
+  store`, per `eas.json`) → Store variant, `com.JHarvey.HomeBaseStore`,
+  named plain "Home Base" (the real public name). Only ever run this
+  profile when actually submitting to the App Store.
+
+Both variants share one EAS project and one `projectId` - it's not
+"two separate projects," just two different bundle identifiers the same
+project can produce, which is Expo's own recommended pattern for this
+exact situation (a TestFlight-only build and a real Store build that
+need to coexist without overwriting each other on a device, or getting
+mixed up in App Store Connect).
+
 ---
 
 ## 8. TestFlight / Release readiness
 
 Current status, as of this writing:
 
-- **Bundle identifier**: set (`com.JHarvey.HomeBase`, both iOS and
-  Android, in `app.json`) - permanent once Apple registers it, so chosen
-  deliberately rather than left as a placeholder.
+- **Bundle identifiers**: `app.json` was replaced with `app.config.js`,
+  which produces two real, separate builds from this one codebase - UAT
+  (`com.JHarvey.HomeBase`, every normal `eas build`) for TestFlight, and
+  Store (`com.JHarvey.HomeBaseStore`, only via `eas build --profile
+  store`) reserved for actual App Store submissions. Both permanent once
+  Apple registers them, so chosen deliberately.
+- **`ios.supportsTablet`**: was `false` - meaning the app only ever ran
+  in iPhone-compatibility mode on iPad, so the tablet-width work done
+  earlier in this project never actually rendered on a real device.
+  Fixed to `true` in the same `app.config.js` change above.
 - **App icon**: finalized - a sage-green house outline with a black
   play-button "door," on the app's own cream background color
   (`#F7F3EC`), matched consistently across the icon, the in-app Cream
