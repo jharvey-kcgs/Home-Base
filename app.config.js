@@ -47,6 +47,12 @@ module.exports = {
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
       },
+      // Explicit rather than relying solely on eas.json's autoIncrement -
+      // App Store Connect tracks build numbers independently per bundle
+      // ID (UAT and Store never actually conflict with each other), but
+      // this Store app's own history already has a build 1 in it from
+      // an earlier attempt, so this submission needs to start higher.
+      buildNumber: IS_STORE ? '2' : '1',
       bundleIdentifier: IS_STORE ? 'com.JHarvey.HomeBaseStore' : 'com.JHarvey.HomeBase',
     },
     android: {
