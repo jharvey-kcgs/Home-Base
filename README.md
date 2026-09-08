@@ -55,10 +55,14 @@ pass, including on-device VoiceOver verification, is complete.
 
 ## 1. Prerequisites
 
-- **Node.js 20 LTS — `20.20.2` specifically.** Not 22, not 24, not
-  whatever the newest release is. See
-  [Gotcha #1](#gotcha-1-node-version) below for exactly why — a newer
-  Node crashes the dev server outright.
+- **Node.js 20 LTS — `20.20.2` specifically.** Re-verified against SDK
+  57: `react-native@0.86.3` and `metro`'s own `package.json` now declare
+  `"node": "^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0"` - so `20.20.2`
+  is still comfortably inside the supported range and confirmed working
+  (`npx expo export` and `npx expo start` both boot clean on it). Note
+  the range now also *lists* 22.13+/24.3+/25+ as supported, which it
+  didn't before - see [Gotcha #1](#gotcha-1-node-version) for what that
+  does and doesn't mean before you go switch off Node 20.
 - [VS Code](https://code.visualstudio.com) (or any editor)
 - The **Expo Go** app on an iPhone, from the App Store — lets you preview
   the app live during development with no build step. See
@@ -135,7 +139,7 @@ plain `npm install` pulls all of them in one shot. **If it throws
 | `react-native-get-random-values`, `uuid` | Generates unique IDs for every stored item |
 | `expo-notifications` | Local notifications for Alert Base — see [Section 5](#5-notifications--badge-behavior) |
 | `expo-splash-screen` | Controls the launch splash - held visible until fonts finish loading |
-| `expo-file-system` | Writes/reads the actual backup .json file for Settings → Data (uses the newer `File`/`Paths` API introduced in SDK 54 - the older `documentDirectory`/`writeAsStringAsync` functions most tutorials still show no longer exist) |
+| `expo-file-system` | Writes/reads the actual backup .json file for Settings → Data (uses the class-based `File`/`Paths` API introduced in SDK 54 - the older `documentDirectory`/`writeAsStringAsync` functions most tutorials still show no longer exist. Still the same shape as of SDK 57's `expo-file-system@57.0.6` - re-verified against the package's own `.d.ts` files during the SDK 54→57 upgrade, nothing to change) |
 | `expo-sharing` | Opens the native share sheet for exporting that backup file |
 | `expo-document-picker` | Lets the person pick a backup file to restore from |
 | `expo-font`, `@expo-google-fonts/playfair-display` | The app's Playfair Display typeface |
@@ -370,6 +374,15 @@ currently unsupported for files under node_modules
 
 Fix: Node 20 LTS specifically. See [Section 1](#1-prerequisites).
 
+**Update, SDK 57:** `react-native`/`metro`'s declared `engines.node`
+range now explicitly includes `^22.13.0` (and `^24.3.0`/`>=25.0.0`)
+alongside `^20.19.4`, which it didn't at SDK 54 - implying this specific
+crash may be fixed on Node 22.13+ now. **Not verified here** - this
+project's dev environment stayed on the already-working `20.20.2`
+throughout the SDK 57 upgrade, so that claim is untested. If you want to
+try a newer Node, run `npx expo start` yourself first and watch for
+`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING` before trusting it.
+
 ### Gotcha #2: ERESOLVE peer dependency errors
 
 If `npm install` refuses to resolve the dependency tree, create a
@@ -398,7 +411,8 @@ incompatible with this version of Expo Go" usually means the project's
 SDK is newer than what's currently on the App Store, not a setup
 mistake. Fix: `npx expo install expo@<older-version> --fix` to step the
 project back to whatever SDK the App Store's Expo Go currently supports.
-This project currently targets **SDK 54** for exactly this reason.
+This project currently targets **SDK 57** for exactly this reason (was
+SDK 54; upgraded once Expo Go dropped SDK 54 support).
 
 ### Gotcha #5: TypeScript files with JSX need `.tsx`, not `.ts`
 
@@ -430,8 +444,9 @@ Ok to proceed? (y)
 **Don't say yes.** This means `npx` couldn't find a *local* copy of Expo
 in `node_modules` (usually because a previous `npm install` failed
 partway through, often right after Gotcha #6) and is offering to fetch
-whatever's newest on npm instead of the SDK 54 this project actually
-depends on - accepting it reintroduces Gotcha #1's Node crash. Fix: get
+whatever's newest on npm instead of the SDK this project actually
+depends on (SDK 57, as of this writing) - accepting it can reintroduce
+Gotcha #1's Node crash on an older Node. Fix: get
 a clean `npm install` to finish successfully first, then `npx expo
 start` should launch directly with no prompt at all.
 
@@ -440,8 +455,10 @@ start` should launch directly with no prompt at all.
 Most tutorials and AI-generated examples for `expo-file-system` use
 `FileSystem.documentDirectory`, `FileSystem.writeAsStringAsync()`, and
 `FileSystem.EncodingType` - none of that exists anymore as of the
-version this project uses (19.x). It was replaced with a class-based
-API:
+version this project uses (`57.0.6`, matching the SDK 57 upgrade -
+this same class-based shape already existed at SDK 54's `19.x`, so
+nothing here needed to change when moving from 54 to 57). It was
+replaced with a class-based API:
 
 ```ts
 import { File, Paths } from 'expo-file-system';
@@ -477,6 +494,36 @@ project can produce, which is Expo's own recommended pattern for this
 exact situation (a TestFlight-only build and a real Store build that
 need to coexist without overwriting each other on a device, or getting
 mixed up in App Store Connect).
+
+### Gotcha #10: `npx expo install --fix` can't self-edit `app.config.js`
+
+Upgrading a native module that ships an Expo config plugin (e.g.
+`@react-native-community/datetimepicker`, `expo-sharing`) sometimes
+requires that plugin be registered in the `plugins` array so it runs
+during prebuild/EAS build. `expo install --fix` normally adds this
+automatically - but only for a static `app.json`. Against this project's
+`app.config.js` (needed for the UAT/Store variant logic - see Gotcha #9)
+it can't safely rewrite a JS file, so it fails outright instead:
+
+```
+Cannot automatically write to dynamic config at: app.config.js
+Add the following to your Expo config
+
+{
+  "plugins": [
+    "@react-native-community/datetimepicker",
+    "expo-sharing"
+  ]
+}
+```
+
+Fix: add the missing entries to the existing `plugins: [...]` array in
+`app.config.js` by hand (plain string entries, same as `'expo-font'`
+already there), then re-run `npx expo install --fix` - it proceeds
+normally once the file no longer needs edits it can't make itself. Any
+future SDK upgrade that adds or updates a config-plugin-carrying package
+will hit this the same way; check the `expo install --fix` output for
+this exact error rather than assuming a silent success.
 
 ---
 

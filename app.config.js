@@ -73,6 +73,8 @@ module.exports = {
           backgroundColor: '#F7F3EC',
         },
       ],
+      '@react-native-community/datetimepicker',
+      'expo-sharing',
     ],
     extra: {
       eas: {

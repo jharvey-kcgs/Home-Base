@@ -22,3 +22,13 @@
 {"_e":"metro:config","_t":1784168474267,"serverRoot":"../..\\..","projectRoot":"../..\\..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
 {"_e":"metro:instantiate","_t":1784168478121,"atlas":false,"workers":8,"host":"::","port":8081}
 {"_e":"metro:client_log","_t":1784168483919,"level":"error","data":["Project is incompatible with this version of Expo Go\n\nThe project you requested requires a newer version of Expo Go.\n\nHow to fix this error:\n\nDownload the latest version of Expo Go from the App Store."]}
+{"_e":"root:init","_t":1788875753386,"format":"v0-jsonl","version":"57.0.22"}
+{"_e":"env:mode","_t":1788875753387,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1788875753389,"mode":"development","files":[],"env":{}}
+{"_e":"root:init","_t":1788875758386,"format":"v0-jsonl","version":"57.0.22"}
+{"_e":"env:mode","_t":1788875758387,"nodeEnv":"development","babelEnv":"development","mode":"development"}
+{"_e":"env:load","_t":1788875758389,"mode":"development","files":[],"env":{}}
+{"_e":"devserver:start","_t":1788875758804,"mode":"development","web":true,"baseUrl":"","asyncRoutes":false,"routerRoot":"../..\\..\\app","serverComponents":false,"serverActions":false,"serverRendering":false,"apiRoutes":false,"exporting":false}
+{"_e":"metro:config","_t":1788875759136,"serverRoot":"../..\\..","projectRoot":"../..\\..","exporting":false,"flags":{"autolinkingModuleResolution":false,"serverActions":false,"serverComponents":false,"reactCompiler":false,"optimizeGraph":false,"treeshaking":false,"logbox":false}}
+{"_e":"expo:dev-tools-plugin:load","_t":1788875759714,"plugins":[]}
+{"_e":"metro:instantiate","_t":1788875764453,"atlas":false,"workers":14,"host":"::","port":8090}
