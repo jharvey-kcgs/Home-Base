@@ -1,7 +1,8 @@
 // screens/HomeScreen.tsx
 
 import React, { useCallback, useState, useMemo } from 'react';
-import { View, ScrollView, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Text from '../components/AppText';
 import { useTheme, ThemeColors } from '../lib/theme';
 import { useFocusEffect } from '@react-navigation/native';

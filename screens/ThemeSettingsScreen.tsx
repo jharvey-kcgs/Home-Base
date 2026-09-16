@@ -1,7 +1,8 @@
 // screens/ThemeSettingsScreen.tsx
 
 import React, { useCallback, useMemo, useState } from 'react';
-import { View, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Switch } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, ScrollView, Switch } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Text from '../components/AppText';
 import { useTheme, ThemeColors } from '../lib/theme';
 import { useResponsive } from '../lib/responsive';

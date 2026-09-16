@@ -6,13 +6,13 @@ import {
   TouchableOpacity,
   SectionList,
   StyleSheet,
-  SafeAreaView,
-  Modal,
+    Modal,
   KeyboardAvoidingView,
   ScrollView,
   Platform,
   Alert,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Text from '../components/AppText';
 import { useTheme, ThemeColors } from '../lib/theme';
 import { useResponsive } from '../lib/responsive';

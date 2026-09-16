@@ -10,7 +10,8 @@
 // original paste-text version.
 
 import React, { useState, useMemo } from 'react';
-import { View, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Alert as RNAlert } from 'react-native';
+import { View, TouchableOpacity, StyleSheet, ScrollView, Alert as RNAlert } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { File, Paths } from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
 import * as DocumentPicker from 'expo-document-picker';

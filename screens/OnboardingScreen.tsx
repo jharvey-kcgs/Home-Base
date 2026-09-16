@@ -6,10 +6,10 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  SafeAreaView,
-  KeyboardAvoidingView,
+    KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Text from '../components/AppText';
 import { useTheme, ThemeColors } from '../lib/theme';
 import { updateSettings } from '../lib/storage';

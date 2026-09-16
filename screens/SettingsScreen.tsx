@@ -4,7 +4,8 @@
 // Theme, Notifications, About. Keeps each page focused and short.
 
 import React, { useMemo } from 'react';
-import { View, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
+import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Text from '../components/AppText';
 import { useTheme, ThemeColors } from '../lib/theme';
 import { useResponsive } from '../lib/responsive';
