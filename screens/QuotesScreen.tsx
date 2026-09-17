@@ -231,9 +231,15 @@ export default function QuotesScreen({ navigation }: any) {
       />
 
       {/* Quote editor */}
-      <Modal visible={showEditor} animationType="slide" presentationStyle="pageSheet">
-        <KeyboardAvoidingView
-          style={styles.editorContainer}
+      <Modal
+        visible={showEditor}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowEditor(false)}
+      >
+        <SafeAreaView style={styles.editorContainer}>
+          <KeyboardAvoidingView
+          style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
           <View style={styles.editorHeader}>
@@ -305,12 +311,20 @@ export default function QuotesScreen({ navigation }: any) {
             </View>
           </ScrollView>
         </KeyboardAvoidingView>
+
+        </SafeAreaView>
       </Modal>
 
       {/* New category modal */}
-      <Modal visible={showCategoryModal} animationType="slide" presentationStyle="pageSheet">
-        <KeyboardAvoidingView
-          style={styles.editorContainer}
+      <Modal
+        visible={showCategoryModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowCategoryModal(false)}
+      >
+        <SafeAreaView style={styles.editorContainer}>
+          <KeyboardAvoidingView
+          style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
           <View style={styles.editorHeader}>
@@ -334,12 +348,20 @@ export default function QuotesScreen({ navigation }: any) {
             />
           </View>
         </KeyboardAvoidingView>
+
+        </SafeAreaView>
       </Modal>
 
       {/* Rename category modal */}
-      <Modal visible={showRenameModal} animationType="slide" presentationStyle="pageSheet">
-        <KeyboardAvoidingView
-          style={styles.editorContainer}
+      <Modal
+        visible={showRenameModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowRenameModal(false)}
+      >
+        <SafeAreaView style={styles.editorContainer}>
+          <KeyboardAvoidingView
+          style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
           <View style={styles.editorHeader}>
@@ -363,6 +385,8 @@ export default function QuotesScreen({ navigation }: any) {
             />
           </View>
         </KeyboardAvoidingView>
+
+        </SafeAreaView>
       </Modal>
     </SafeAreaView>
   );
@@ -403,7 +427,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   quoteText: { fontSize: 16, fontFamily: 'PlayfairDisplay_400Regular_Italic' },
   author: { fontSize: 13, color: c.textSecondary, marginTop: 4, fontFamily: REGULAR },
   empty: { padding: 20, textAlign: 'center', color: c.textMuted, fontFamily: REGULAR },
-  editorContainer: { flex: 1, backgroundColor: c.background, paddingTop: Platform.OS === 'ios' ? 60 : 24 },
+  editorContainer: { flex: 1, backgroundColor: c.background },
   editorHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',

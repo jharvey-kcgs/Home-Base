@@ -244,9 +244,15 @@ export default function HabitsScreen({ navigation }: any) {
         {checks.length === 0 && <Text style={styles.empty}>No tracking habits yet.</Text>}
       </ScrollView>
 
-      <Modal visible={showEditor} animationType="slide" presentationStyle="pageSheet">
-        <KeyboardAvoidingView
-          style={styles.editorContainer}
+      <Modal
+        visible={showEditor}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowEditor(false)}
+      >
+        <SafeAreaView style={styles.editorContainer}>
+          <KeyboardAvoidingView
+          style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
           <View style={styles.editorHeader}>
@@ -313,10 +319,17 @@ export default function HabitsScreen({ navigation }: any) {
             )}
           </ScrollView>
         </KeyboardAvoidingView>
+
+        </SafeAreaView>
       </Modal>
 
       {/* Habit report */}
-      <Modal visible={showReport} animationType="slide" presentationStyle="pageSheet">
+      <Modal
+        visible={showReport}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowReport(false)}
+      >
         <SafeAreaView style={styles.editorContainer}>
           <View style={styles.editorHeader}>
             <TouchableOpacity onPress={() => setShowReport(false)}>
@@ -416,7 +429,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   yesNoButtonActiveNo: { backgroundColor: c.danger },
   yesNoText: { fontSize: 14, color: c.text, fontFamily: REGULAR },
   yesNoTextActive: { color: c.accentText },
-  editorContainer: { flex: 1, backgroundColor: c.background, paddingTop: Platform.OS === 'ios' ? 60 : 24 },
+  editorContainer: { flex: 1, backgroundColor: c.background },
   editorHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',

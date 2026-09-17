@@ -289,9 +289,15 @@ export default function AlertsScreen({ navigation }: any) {
         contentContainerStyle={{ paddingBottom: 40 }}
       />
 
-      <Modal visible={showEditor} animationType="slide" presentationStyle="pageSheet">
-        <KeyboardAvoidingView
-          style={styles.editorContainer}
+      <Modal
+        visible={showEditor}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowEditor(false)}
+      >
+        <SafeAreaView style={styles.editorContainer}>
+          <KeyboardAvoidingView
+          style={{ flex: 1 }}
           behavior={Platform.OS === 'ios' ? 'padding' : undefined}
         >
           <View style={styles.editorHeader}>
@@ -420,6 +426,8 @@ export default function AlertsScreen({ navigation }: any) {
             />
           </ScrollView>
         </KeyboardAvoidingView>
+
+        </SafeAreaView>
       </Modal>
     </SafeAreaView>
   );
@@ -461,7 +469,7 @@ const makeStyles = (c: ThemeColors) => StyleSheet.create({
   doneText: { textDecorationLine: 'line-through', color: c.textMuted },
   rowSubtitle: { fontSize: 12, color: c.textSecondary, marginTop: 2, fontFamily: REGULAR },
   empty: { padding: 20, textAlign: 'center', color: c.textMuted, fontFamily: REGULAR },
-  editorContainer: { flex: 1, backgroundColor: c.background, paddingTop: Platform.OS === 'ios' ? 60 : 24 },
+  editorContainer: { flex: 1, backgroundColor: c.background },
   editorHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
