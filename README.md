@@ -13,7 +13,7 @@ for anyone else looking at the repo.*
 5. [Notifications & badge behavior](#5-notifications--badge-behavior)
 6. [Color accessibility](#6-color-accessibility)
 7. [Known setup gotchas](#7-known-setup-gotchas)
-8. [TestFlight / Release readiness](#8-testflight--release-readiness)
+8. [App Store / Google Play release readiness](#8-app-store--google-play-release-readiness)
 9. [Roadmap (genuinely open, not yet built)](#9-roadmap-genuinely-open-not-yet-built)
 
 Home Base is a personal all-in-one app — a Home screen made of six
@@ -42,27 +42,38 @@ this app collects or transmits about you.
 - A complete local backup system — export, import, and a two-step-confirm
   full reset, all in Settings → Data
 
-**Where this stands right now:** every screen has been individually
-tested, including a full round of bug-fixing across notifications, badge
-behavior, dark mode, and theming. A `npx tsc --noEmit` pass across the
-whole project currently returns zero errors. What's left is almost
-entirely TestFlight logistics (Apple Developer Program enrollment,
-`eas build`, TestFlight distribution — tracked in
-[Section 8](#8-testflight--release-readiness)); the full accessibility
-pass, including on-device VoiceOver verification, is complete.
+**Where this stands right now:** the app is past TestFlight and is now a
+real two-platform submission in flight — a full 1.0 build is in with
+Apple App Store review, and a Store-variant Android build is prepared for
+Google Play, pending the one-time developer-account identity/device
+verification Google requires (see
+[Section 8](#8-appstoregoogle-play-release-readiness)). Two Android-
+specific bugs reported by a real tester (header/status-bar overlap from
+the wrong `SafeAreaView` import, and modal editors with no hardware-
+back-button support - see [Gotchas #11](#gotcha-11-safeareaview-has-two-completely-different-sources-and-the-wrong-one-is-invisible-on-ios)
+and [#12](#gotcha-12-modal-renders-outside-the-screens-own-safeareaview-and-needs-its-own-back-button-wiring))
+were found and fixed. A `npx tsc --noEmit` pass across the whole project
+currently returns zero errors, and the full accessibility pass,
+including on-device VoiceOver verification, is complete. Details on
+where each store submission actually stands are in
+[Section 8](#8-app-store--google-play-release-readiness).
 
 ---
 
 ## 1. Prerequisites
 
-- **Node.js 20 LTS — `20.20.2` specifically.** Re-verified against SDK
-  57: `react-native@0.86.3` and `metro`'s own `package.json` now declare
-  `"node": "^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0"` - so `20.20.2`
-  is still comfortably inside the supported range and confirmed working
-  (`npx expo export` and `npx expo start` both boot clean on it). Note
-  the range now also *lists* 22.13+/24.3+/25+ as supported, which it
-  didn't before - see [Gotcha #1](#gotcha-1-node-version) for what that
-  does and doesn't mean before you go switch off Node 20.
+- **Node.js 22.13+ (LTS "Jod" or newer) — this changed at SDK 58.**
+  `react-native@0.88.1` and `metro`'s own `package.json` now declare
+  `"node": "^22.13.0 || ^24.3.0 || >= 26.0.0"` - Node 20 has been dropped
+  from the supported range entirely (it was `^20.19.4 || ^22.13.0 ||
+  ^24.3.0 || >= 25.0.0` at SDK 57). This project was pinned to Node
+  `20.20.2` specifically through SDK 54-57 to dodge
+  [Gotcha #1](#gotcha-1-node-version)'s type-stripping crash, so moving
+  to SDK 58 means moving off Node 20 for the first time. **Not yet
+  re-verified against a real Node 22.13+ install at the time of this
+  SDK 58 upgrade** - run `npx expo start` yourself on Node 22.13+ first
+  and watch for `ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING` before
+  trusting that Gotcha #1 is actually behind you.
 - [VS Code](https://code.visualstudio.com) (or any editor)
 - The **Expo Go** app on an iPhone, from the App Store — lets you preview
   the app live during development with no build step. See
@@ -72,26 +83,24 @@ pass, including on-device VoiceOver verification, is complete.
   testing and moving toward TestFlight — see
   [Section 8](#8-testflight--release-readiness).
 
-**Installing Node 20.20.2 exactly (recommended — via Chocolatey):**
+**Installing Node 22 LTS (recommended — via Chocolatey):**
 
-Pinning the exact version avoids any ambiguity about which Node 20.x
-patch you end up with. Install Chocolatey first (skip if already
-installed):
+Install Chocolatey first (skip if already installed):
 
 ```powershell
 Set-ExecutionPolicy Bypass -Scope Process -Force; [System.Net.ServicePointManager]::SecurityProtocol = [System.Net.ServicePointManager]::SecurityProtocol -bor 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://community.chocolatey.org/install.ps1'))
 ```
 
-Then install the exact Node version:
+Then install Node 22 LTS:
 
 ```powershell
-choco install nodejs --version="20.20.2"
+choco install nodejs-lts
 ```
 
 **Alternative — direct download:** grab the **LTS** installer from
-[nodejs.org](https://nodejs.org) instead (not **Current**). Won't pin the
-exact patch version, but any Node 20.x behaves the same as `20.20.2` for
-this project.
+[nodejs.org](https://nodejs.org) instead (not **Current**) - as of this
+SDK 58 upgrade that's Node 22's line, which satisfies the `^22.13.0`
+floor above.
 
 Confirm either way with:
 
@@ -101,7 +110,7 @@ node -v
 
 If you ever need to switch between Node versions across different
 projects, [nvm-windows](https://github.com/coreybutler/nvm-windows/releases)
-does that without reinstalling each time (`nvm install 20`, `nvm use 20`).
+does that without reinstalling each time (`nvm install 22`, `nvm use 22`).
 
 **One more one-time Windows setting worth turning on** — this project's
 dependency tree nests deep enough to occasionally exceed Windows'
@@ -139,7 +148,7 @@ plain `npm install` pulls all of them in one shot. **If it throws
 | `react-native-get-random-values`, `uuid` | Generates unique IDs for every stored item |
 | `expo-notifications` | Local notifications for Alert Base — see [Section 5](#5-notifications--badge-behavior) |
 | `expo-splash-screen` | Controls the launch splash - held visible until fonts finish loading |
-| `expo-file-system` | Writes/reads the actual backup .json file for Settings → Data (uses the class-based `File`/`Paths` API introduced in SDK 54 - the older `documentDirectory`/`writeAsStringAsync` functions most tutorials still show no longer exist. Still the same shape as of SDK 57's `expo-file-system@57.0.6` - re-verified against the package's own `.d.ts` files during the SDK 54→57 upgrade, nothing to change) |
+| `expo-file-system` | Writes/reads the actual backup .json file for Settings → Data (uses the class-based `File`/`Paths` API introduced in SDK 54 - the older `documentDirectory`/`writeAsStringAsync` functions most tutorials still show no longer exist. Still the same shape as of SDK 58's `expo-file-system@58.0.14` - re-verified against the package's own `.d.ts` files during both the SDK 54→57 and 57→58 upgrades, nothing to change. Was missing from this table and from `package.json`'s own dependency list for a while despite being directly imported - it only resolved via hoisting as a transitive dependency of `expo` itself; added explicitly to stop that being a future-install risk) |
 | `expo-sharing` | Opens the native share sheet for exporting that backup file |
 | `expo-document-picker` | Lets the person pick a backup file to restore from |
 | `expo-font`, `@expo-google-fonts/playfair-display` | The app's Playfair Display typeface |
@@ -372,16 +381,20 @@ Error [ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING]: Stripping types is
 currently unsupported for files under node_modules
 ```
 
-Fix: Node 20 LTS specifically. See [Section 1](#1-prerequisites).
+Originally fixed by pinning Node 20 LTS specifically, through SDK 54-57.
 
-**Update, SDK 57:** `react-native`/`metro`'s declared `engines.node`
-range now explicitly includes `^22.13.0` (and `^24.3.0`/`>=25.0.0`)
-alongside `^20.19.4`, which it didn't at SDK 54 - implying this specific
-crash may be fixed on Node 22.13+ now. **Not verified here** - this
-project's dev environment stayed on the already-working `20.20.2`
-throughout the SDK 57 upgrade, so that claim is untested. If you want to
-try a newer Node, run `npx expo start` yourself first and watch for
-`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING` before trusting it.
+**Update, SDK 58: Node 20 is no longer an option at all.**
+`react-native@0.88.1`/`metro`'s declared `engines.node` range dropped
+`^20.19.4` entirely - it's now `^22.13.0 || ^24.3.0 || >= 26.0.0` (at SDK
+57 it was still `^20.19.4 || ^22.13.0 || ^24.3.0 || >= 25.0.0`). The
+inclusion of `22.13+` in that SDK 57 range was a hint this crash might
+already be fixed there, but that was never actually verified since the
+SDK 57 dev environment just stayed on the already-working `20.20.2`.
+Now there's no 20.x fallback to fall back *to* - SDK 58 requires
+installing Node 22.13+ (see [Section 1](#1-prerequisites)) and
+confirming `npx expo start` boots clean on it, watching specifically for
+`ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING` the first time it's run on
+the new Node version.
 
 ### Gotcha #2: ERESOLVE peer dependency errors
 
@@ -411,8 +424,10 @@ incompatible with this version of Expo Go" usually means the project's
 SDK is newer than what's currently on the App Store, not a setup
 mistake. Fix: `npx expo install expo@<older-version> --fix` to step the
 project back to whatever SDK the App Store's Expo Go currently supports.
-This project currently targets **SDK 57** for exactly this reason (was
-SDK 54; upgraded once Expo Go dropped SDK 54 support).
+This project currently targets **SDK 58** (was SDK 54, then SDK 57;
+upgraded each time once Expo Go dropped support for the previous one -
+if Expo Go ever refuses SDK 58, that's the pattern repeating, not a new
+problem).
 
 ### Gotcha #5: TypeScript files with JSX need `.tsx`, not `.ts`
 
@@ -437,7 +452,7 @@ persists, check `npm config get prefix` points somewhere sensible.
 
 ```
 Need to install the following packages:
-expo@57.0.8
+expo@58.0.26
 Ok to proceed? (y)
 ```
 
@@ -445,7 +460,7 @@ Ok to proceed? (y)
 in `node_modules` (usually because a previous `npm install` failed
 partway through, often right after Gotcha #6) and is offering to fetch
 whatever's newest on npm instead of the SDK this project actually
-depends on (SDK 57, as of this writing) - accepting it can reintroduce
+depends on (SDK 58, as of this writing) - accepting it can reintroduce
 Gotcha #1's Node crash on an older Node. Fix: get
 a clean `npm install` to finish successfully first, then `npx expo
 start` should launch directly with no prompt at all.
@@ -455,10 +470,10 @@ start` should launch directly with no prompt at all.
 Most tutorials and AI-generated examples for `expo-file-system` use
 `FileSystem.documentDirectory`, `FileSystem.writeAsStringAsync()`, and
 `FileSystem.EncodingType` - none of that exists anymore as of the
-version this project uses (`57.0.6`, matching the SDK 57 upgrade -
+version this project uses (`58.0.14`, matching the SDK 58 upgrade -
 this same class-based shape already existed at SDK 54's `19.x`, so
-nothing here needed to change when moving from 54 to 57). It was
-replaced with a class-based API:
+nothing here needed to change across either the 54→57 or 57→58
+upgrades). It was replaced with a class-based API:
 
 ```ts
 import { File, Paths } from 'expo-file-system';
@@ -525,26 +540,76 @@ future SDK upgrade that adds or updates a config-plugin-carrying package
 will hit this the same way; check the `expo install --fix` output for
 this exact error rather than assuming a silent success.
 
+### Gotcha #11: `SafeAreaView` has two completely different sources, and the wrong one is invisible on iOS
+
+`import { SafeAreaView } from 'react-native'` and
+`import { SafeAreaView } from 'react-native-safe-area-context'` are two
+unrelated components with the same name. The plain `react-native` one
+is iOS-only in practice (it does nothing useful on Android), so a screen
+built and tested only on an iPhone simulator/device looks completely
+fine even when every single screen is using the wrong import - this is
+exactly what happened here: all 15 screens imported `SafeAreaView` from
+`'react-native'`, and it took a real Android tester to surface it
+(header text and the status bar clock/icons overlapping, buttons
+unclickable underneath the status bar). Fix: always import
+`SafeAreaView` from `'react-native-safe-area-context'` - never from
+plain `'react-native'` - and don't trust that it "looks fine" without
+checking on a real Android device at least once.
+
+### Gotcha #12: `Modal` renders outside the screen's own `SafeAreaView`, and needs its own back-button wiring
+
+Two related Android-only bugs, also only caught by a real device tester:
+
+1. React Native's `Modal` component renders as a separate native layer,
+   entirely outside whatever `SafeAreaView` hierarchy the screen
+   underneath it has - so fixing Gotcha #11 at the screen level does
+   nothing for content inside an open `Modal`. Every editor modal
+   (Alert/Event/Habit×2/Quote×3/Task/Thought - 9 total) had its own
+   hardcoded `paddingTop: Platform.OS === 'ios' ? 60 : 24` guess instead
+   of real safe-area insets, which left Cancel/Save buttons caught
+   behind Android's status bar and unclickable. Fix: wrap each modal's
+   content in its own `SafeAreaView` (from
+   `react-native-safe-area-context`) and drop the hardcoded padding.
+2. None of those same 9 modals had `onRequestClose`, which Android
+   specifically requires to route the hardware/on-screen back button -
+   without it, the back button silently does nothing while a modal is
+   open, with no way to back out (compounding bug #1, since Cancel was
+   also unreachable). Fix: every `<Modal>` needs
+   `onRequestClose={() => setShowX(false)}` wired to that modal's own
+   existing cancel-state setter, even though iOS never needed it.
+
+Both are a direct consequence of the same root cause: this project's
+entire first round of device testing happened on iOS, where neither bug
+is visible at all. Any new modal or screen added going forward should
+assume Android testing is required, not optional, for anything involving
+`SafeAreaView` or `Modal`.
+
 ---
 
-## 8. TestFlight / Release readiness
+## 8. App Store / Google Play release readiness
 
 Current status, as of this writing:
 
 - **Bundle identifiers**: `app.json` was replaced with `app.config.js`,
   which produces two real, separate builds from this one codebase - UAT
-  (`com.JHarvey.HomeBase`, every normal `eas build`) for TestFlight, and
-  Store (`com.JHarvey.HomeBaseStore`, only via `eas build --profile
-  store`) reserved for actual App Store submissions. Both permanent once
-  Apple registers them, so chosen deliberately.
+  (`com.JHarvey.HomeBase` / `com.JHarvey.HomeBase`, every normal
+  `eas build`) for TestFlight, and Store (`com.JHarvey.HomeBaseStore`,
+  only via `eas build --profile store`) reserved for actual App Store /
+  Google Play submissions. Both permanent once Apple/Google register
+  them, so chosen deliberately.
 - **`ios.supportsTablet`**: was `false` - meaning the app only ever ran
   in iPhone-compatibility mode on iPad, so the tablet-width work done
   earlier in this project never actually rendered on a real device.
-  Fixed to `true` in the same `app.config.js` change above.
+  Fixed to `true` in the same `app.config.js` change above (this also
+  triggered Apple's 13" iPad screenshot requirement, since a tablet-
+  capable binary gets reviewed on tablet too).
 - **App icon**: finalized - a sage-green house outline with a black
   play-button "door," on the app's own cream background color
   (`#F7F3EC`), matched consistently across the icon, the in-app Cream
-  theme option, and the Android adaptive icon background.
+  theme option, and the Android adaptive icon background, plus the
+  separate 512×512 Play Store icon size and the 1024×500 Play Store
+  Feature Graphic (both Android-only asset requirements with no Apple
+  equivalent).
 - **Data safety**: full export/import backup system plus a two-step-
   confirm "Reset App Data," both in Settings → Data, tested working
   end-to-end (export → reset → restore, confirmed data and theme
@@ -555,17 +620,43 @@ Current status, as of this writing:
 - **Accessibility**: color contrast pass complete and verified; VoiceOver
   labeling complete and verified on-device across all 15 screens (see
   [Section 6](#6-color-accessibility)).
+- **Android-specific bugs**: a real Android tester found and confirmed
+  fixes for the `SafeAreaView` header-overlap bug and the modal
+  Cancel/Save/back-button bug - see
+  [Gotcha #11](#gotcha-11-safeareaview-has-two-completely-different-sources-and-the-wrong-one-is-invisible-on-ios)
+  and [#12](#gotcha-12-modal-renders-outside-the-screens-own-safeareaview-and-needs-its-own-back-button-wiring).
 - **TypeScript**: `npx tsc --noEmit` currently returns zero errors
-  across the whole project.
+  across the whole project (re-verified after the SDK 58 upgrade).
 - **Splash screen**: configured - shows the app icon (logo on the
   established cream background) via `expo-splash-screen`, held on screen
   until fonts have finished loading rather than a fixed timer, so there's
   no flash of the wrong font underneath it.
-- **App Store Connect metadata** (description, "What to Test" notes,
-  privacy questionnaire guidance, support URL) - see `Path-To-Store.md`.
-- **Apple Developer Program enrollment** - not yet started.
-- **Not yet done**: `eas-cli` setup, `eas build:configure`, first real
-  `eas build --platform ios`, TestFlight group setup.
+- **Apple App Store Connect**: full 1.0 metadata (description,
+  keywords, "What to Test" notes, privacy questionnaire, Copyright,
+  Content Rights Information, screenshots for both phone and 13" iPad)
+  is complete - see `Home-Base-App-Store-Info.md` (gitignored, not in
+  this repo publicly). The first review pass came back twice: once as a
+  standard Guideline 2.1 information request (answered with a screen
+  recording plus the Q&A drafted in that doc's own Section 13), and once
+  flagged for the Kids Category due to an accidental "Made for Kids"
+  toggle under Age Rating that had nothing to do with the app's actual
+  Productivity/Lifestyle category or 9+ rating - unchecked once found.
+  Current review status as of the last update to this doc: resubmitted
+  after both corrections; final approval not yet confirmed here.
+- **Google Play Console**: Store-variant build prepared
+  (`com.JHarvey.HomeBaseStore`, `eas build --platform android --profile
+  store`, producing an `.aab`), full listing metadata (description,
+  Tags, Content Rating, Target Audience and Content, Data Safety form,
+  Feature Graphic, exact-ratio phone screenshots) complete - see
+  `Home-Base-Google-Play-Info.md` (also gitignored). Blocked on Google's
+  one-time developer-account identity verification and physical Android
+  device verification (no emulator accepted) - last known status was
+  that this was still outstanding, pending either Google's
+  document-review approval or getting hands on a physical Android
+  device briefly; unresolved as of the last update to this doc.
+- **`eas-cli` / build pipeline**: fully set up and exercised for real -
+  see `EAS-Commands-Cheatsheet.md` (root-level, not app-specific) for the
+  actual build/submit commands for both variants.
 
 ---
 
