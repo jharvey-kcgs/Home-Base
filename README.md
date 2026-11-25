@@ -657,6 +657,16 @@ Current status, as of this writing:
 - **`eas-cli` / build pipeline**: fully set up and exercised for real -
   see `EAS-Commands-Cheatsheet.md` (root-level, not app-specific) for the
   actual build/submit commands for both variants.
+- **Versioning**: the user-facing semantic version (what shows in
+  TestFlight/the App Store/Play Console) lives in `version.json`, not
+  hardcoded in `app.config.js` - EAS's own `autoIncrement` (see
+  `eas.json`) only ever bumps the separate internal build number, never
+  this. `npm run build:uat:ios` / `build:uat:android` /
+  `build:store:ios` / `build:store:android` each bump the patch version
+  via `scripts/bump-version.js` before kicking off the matching
+  `eas build`; run `npm run version:bump:minor` or `version:bump:major`
+  by hand first if a build should land on a different version tier.
+  Same pattern as League Base and Cooking Base.
 
 ---
 

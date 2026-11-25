@@ -24,11 +24,18 @@
 
 const IS_STORE = process.env.APP_VARIANT === 'production';
 
+// User-facing semantic version (shown in TestFlight/App Store/Play
+// Console) lives in version.json, not hardcoded here - run
+// `npm run version:bump` (or let build:uat:*/build:store:* do it for
+// you) to move it forward. EAS's own autoIncrement, below in eas.json,
+// only ever bumps the separate internal build number - never this.
+const { version } = require('./version.json');
+
 module.exports = {
   expo: {
     name: IS_STORE ? 'Home Base: Plans & Habits' : 'Home Base (UAT)',
     slug: 'home-base',
-    version: '1.0.0',
+    version,
     orientation: 'portrait',
     userInterfaceStyle: 'automatic',
     newArchEnabled: true,
