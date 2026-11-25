@@ -3,6 +3,7 @@
 import React, { useMemo } from 'react';
 import { View, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Constants from 'expo-constants';
 import Text from '../components/AppText';
 import { useTheme, ThemeColors } from '../lib/theme';
 import { useResponsive } from '../lib/responsive';
@@ -35,6 +36,18 @@ export default function AboutScreen({ navigation }: any) {
   const { theme } = useTheme();
   const styles = useMemo(() => makeStyles(theme.colors), [theme.colors]);
   const { maxContentWidth } = useResponsive();
+
+  // Version comes from app.config.js (itself read from version.json,
+  // bumped by `npm run version:bump` / the build:uat:*/build:store:*
+  // scripts). The UAT variant's name carries "(UAT)" - the Store
+  // variant's doesn't - so that's what tells the two apart at runtime.
+  const version = Constants.expoConfig?.version ?? 'unknown';
+  const isUat = (Constants.expoConfig?.name ?? '').includes('(UAT)');
+  const infoRows: [string, string][] = [
+    ['Version', version],
+    ['Build', isUat ? 'UAT (testing)' : 'Release'],
+    ['Storage', 'On this device only'],
+  ];
 
   return (
     <SafeAreaView style={styles.safe}>
@@ -95,6 +108,15 @@ export default function AboutScreen({ navigation }: any) {
             Completed" option to sweep out everything you've already checked off in one go.
           </Text>
         </Section>
+
+        <View style={styles.infoCard}>
+          {infoRows.map(([label, value], i) => (
+            <View key={label} style={[styles.infoRow, i > 0 && styles.infoRowDivider]}>
+              <Text style={styles.infoLabel}>{label}</Text>
+              <Text style={styles.infoValue}>{value}</Text>
+            </View>
+          ))}
+        </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -121,4 +143,17 @@ const makeStyles = (c: ThemeColors) =>
     itemName: { fontSize: 15, fontFamily: REGULAR, fontWeight: '700', color: c.accentReadable, marginBottom: 2 },
     itemBody: { fontSize: 14, fontFamily: REGULAR, color: c.textSecondary, lineHeight: 20 },
     paragraph: { fontSize: 14, fontFamily: REGULAR, color: c.textSecondary, lineHeight: 20 },
+    infoCard: {
+      marginTop: 20,
+      marginHorizontal: 16,
+      borderWidth: 1,
+      borderColor: c.border,
+      borderRadius: 12,
+      backgroundColor: c.surface,
+      overflow: 'hidden',
+    },
+    infoRow: { flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 16, paddingVertical: 14 },
+    infoRowDivider: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: c.border },
+    infoLabel: { fontSize: 15, fontFamily: REGULAR, color: c.text },
+    infoValue: { fontSize: 15, fontFamily: REGULAR, color: c.textMuted },
   });

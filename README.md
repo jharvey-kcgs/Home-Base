@@ -661,12 +661,12 @@ Current status, as of this writing:
   TestFlight/the App Store/Play Console) lives in `version.json`, not
   hardcoded in `app.config.js` - EAS's own `autoIncrement` (see
   `eas.json`) only ever bumps the separate internal build number, never
-  this. `npm run build:uat:ios` / `build:uat:android` /
-  `build:store:ios` / `build:store:android` each bump the patch version
-  via `scripts/bump-version.js` before kicking off the matching
-  `eas build`; run `npm run version:bump:minor` or `version:bump:major`
-  by hand first if a build should land on a different version tier.
-  Same pattern as League Base and Cooking Base.
+  this. `npm run build:uat` / `build:uat:android` / `build:store` /
+  `build:store:android` each bump the patch version via
+  `scripts/bump-version.js` (through `npm run bump`) before kicking off
+  the matching `eas build`; run `npm run bump:minor` or `bump:major` by
+  hand first if a build should land on a different version tier. Same
+  pattern and script names as League Base and Cooking Base.
 
 ---
 
